@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { ChefHat, Menu, X } from "lucide-react";
 
 export default function Navbar() {
@@ -65,20 +66,20 @@ export default function Navbar() {
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center gap-3">
-            <a
-              href="#signin"
+            <Link
+              to="/signin"
               id="nav-signin"
               className="px-5 py-2.5 text-sm font-semibold text-white/80 hover:text-white border border-white/15 hover:border-white/30 rounded-xl transition-all duration-200 hover:bg-white/5"
             >
               Sign In
-            </a>
-            <a
-              href="#signup"
+            </Link>
+            <Link
+              to="/signup"
               id="nav-signup"
               className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-rose-500 rounded-xl hover:from-orange-400 hover:to-rose-400 transition-all duration-200 shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 hover:scale-105"
             >
               Sign Up Free
-            </a>
+            </Link>
           </div>
 
           {/* Mobile Toggle */}
@@ -103,8 +104,8 @@ export default function Navbar() {
           <a href="#features" className="text-sm font-medium text-white/70 hover:text-white transition-colors" onClick={() => setMenuOpen(false)}>Features</a>
           <a href="#how-it-works" className="text-sm font-medium text-white/70 hover:text-white transition-colors" onClick={() => setMenuOpen(false)}>How It Works</a>
           <hr className="border-white/10" />
-          <a href="#signin" className="text-sm font-semibold text-white/80 hover:text-white transition-colors" onClick={() => setMenuOpen(false)}>Sign In</a>
-          <a href="#signup" className="px-5 py-2.5 text-sm font-semibold text-center text-white bg-gradient-to-r from-orange-500 to-rose-500 rounded-xl" onClick={() => setMenuOpen(false)}>Sign Up Free</a>
+          <Link to="/signin" className="text-sm font-semibold text-white/80 hover:text-white transition-colors" onClick={() => setMenuOpen(false)}>Sign In</Link>
+          <Link to="/signup" className="px-5 py-2.5 text-sm font-semibold text-center text-white bg-gradient-to-r from-orange-500 to-rose-500 rounded-xl" onClick={() => setMenuOpen(false)}>Sign Up Free</Link>
         </div>
       </div>
     </nav>

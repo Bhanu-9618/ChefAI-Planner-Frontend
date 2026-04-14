@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   Sparkles,
   ChefHat,
@@ -105,15 +106,15 @@ function HeroSection() {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <a
-            href="#signup"
+          <Link
+            to="/signup"
             id="hero-signup-btn"
             className="px-8 py-4 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-400 hover:to-rose-400 text-white font-bold text-base rounded-2xl flex items-center gap-2 transition-all duration-300 shadow-2xl shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-105"
           >
             <Sparkles size={18} />
             Try It Free
             <ArrowRight size={18} />
-          </a>
+          </Link>
           <a
             href="#how-it-works"
             id="hero-learn-btn"
@@ -397,22 +398,22 @@ function CTASection() {
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <a
-                href="#signup"
+              <Link
+                to="/signup"
                 id="cta-signup-btn"
                 className="px-8 py-4 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-400 hover:to-rose-400 text-white font-bold text-base rounded-2xl flex items-center gap-2 transition-all duration-300 shadow-2xl shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-105"
               >
                 <Sparkles size={18} />
                 Get Started Free
                 <ArrowRight size={18} />
-              </a>
-              <a
-                href="#signin"
+              </Link>
+              <Link
+                to="/signin"
                 id="cta-signin-btn"
                 className="px-8 py-4 bg-white/8 hover:bg-white/12 border border-white/15 hover:border-white/25 text-white font-semibold text-base rounded-2xl transition-all duration-300"
               >
                 Sign In
-              </a>
+              </Link>
             </div>
           </div>
         </div>
