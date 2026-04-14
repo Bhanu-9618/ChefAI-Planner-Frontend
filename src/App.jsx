@@ -5,6 +5,7 @@ import SignUpPage from "./pages/SignUpPage";
 import SignInPage from "./pages/SignInPage";
 import DashboardPage from "./pages/DashboardPage";
 import MyRecipesPage from "./pages/MyRecipesPage";
+import ProfilePage from "./pages/ProfilePage";
 import "./App.css";
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/dashboard/my-recipes" element={<MyRecipesPage />} />
+        <Route path="/dashboard/profile" element={<ProfilePage />} />
       </Routes>
     </BrowserRouter>
   );
