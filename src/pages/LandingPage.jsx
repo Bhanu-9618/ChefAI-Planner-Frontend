@@ -11,7 +11,6 @@ import {
   BookOpen,
 } from "lucide-react";
 
-// ─── Floating Orbs Background ────────────────────────────────────────────────
 function FloatingOrbs() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -28,7 +27,6 @@ function FloatingOrbs() {
   );
 }
 
-// ─── Image Placeholder ────────────────────────────────────────────────────────
 function ImagePlaceholder({ label, className = "" }) {
   return (
     <div
@@ -45,7 +43,6 @@ function ImagePlaceholder({ label, className = "" }) {
   );
 }
 
-// ─── Hero Section ─────────────────────────────────────────────────────────────
 function HeroSection() {
   return (
     <section
@@ -53,8 +50,6 @@ function HeroSection() {
       className="relative min-h-screen flex items-center justify-center pt-20 pb-16 px-6"
     >
       <FloatingOrbs />
-
-      {/* Grain overlay */}
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{
@@ -63,13 +58,10 @@ function HeroSection() {
       ></div>
 
       <div className="relative z-10 max-w-4xl mx-auto text-center">
-        {/* Badge */}
         <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-sm font-medium text-orange-300 mb-8 backdrop-blur-sm">
           <Sparkles size={14} className="animate-pulse" />
           AI-Powered Recipe Generator
         </div>
-
-        {/* Headline */}
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[1.05] mb-6">
           <span className="text-white">Got Ingredients?</span>
           <br />
@@ -97,14 +89,10 @@ function HeroSection() {
             </svg>
           </span>
         </h1>
-
-        {/* Subheading */}
         <p className="text-lg md:text-xl text-white/50 max-w-xl mx-auto mb-12 leading-relaxed font-light">
           Tell ChefAI what ingredients you have. It generates a perfect recipe
           instantly — then save it or download it as a PDF.
         </p>
-
-        {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
             to="/signup"
@@ -128,7 +116,6 @@ function HeroSection() {
   );
 }
 
-// ─── Features Section ─────────────────────────────────────────────────────────
 const features = [
   {
     icon: Utensils,
@@ -157,9 +144,7 @@ function FeaturesSection() {
   return (
     <section id="features" className="relative py-28 px-6 overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-32 bg-gradient-to-b from-transparent via-white/15 to-transparent"></div>
-
       <div className="max-w-5xl mx-auto">
-        {/* Header */}
         <div className="text-center mb-16">
           <span className="inline-block text-xs font-bold uppercase tracking-widest text-orange-400 mb-4">
             What ChefAI Does
@@ -175,8 +160,6 @@ function FeaturesSection() {
             No bloat, no complexity. ChefAI does exactly what you need — nothing more.
           </p>
         </div>
-
-        {/* Feature Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {features.map((f, i) => (
             <div
@@ -200,7 +183,6 @@ function FeaturesSection() {
   );
 }
 
-// ─── How It Works ─────────────────────────────────────────────────────────────
 const steps = [
   {
     num: "01",
@@ -243,7 +225,6 @@ function HowItWorksSection() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Steps */}
           <div className="flex flex-col gap-8">
             {steps.map((step, i) => (
               <div key={i} className="flex gap-5 group">
@@ -259,10 +240,9 @@ function HowItWorksSection() {
                   <p className="text-white/45 text-sm leading-relaxed font-light">{step.desc}</p>
                 </div>
               </div>
-            ))}
+            ))}  
           </div>
 
-          {/* App Screenshot */}
           <div className="rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-black/40">
             <img
               src="/image/img 1.jpg"
@@ -277,8 +257,6 @@ function HowItWorksSection() {
 }
 
 
-
-// ─── Testimonials ─────────────────────────────────────────────────────────────
 const testimonials = [
   {
     name: "Sarah M.",
@@ -360,7 +338,6 @@ function TestimonialsSection() {
   );
 }
 
-// ─── CTA Section ──────────────────────────────────────────────────────────────
 function CTASection() {
   return (
     <section id="cta" className="py-28 px-6 relative overflow-hidden">
@@ -385,7 +362,7 @@ function CTASection() {
               No subscriptions, no hidden fees.
             </p>
 
-            {/* Checklist */}
+
             <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 mb-10">
               {["Free to use", "No credit card", "Save unlimited recipes", "PDF download"].map(
                 (item) => (
@@ -422,7 +399,6 @@ function CTASection() {
   );
 }
 
-// ─── Footer ───────────────────────────────────────────────────────────────────
 function Footer() {
   return (
     <footer className="border-t border-white/8 py-10 px-6">
@@ -442,7 +418,6 @@ function Footer() {
   );
 }
 
-// ─── Landing Page ─────────────────────────────────────────────────────────────
 export default function LandingPage() {
   return (
     <div className="bg-[#0a0a0a] text-white min-h-screen">

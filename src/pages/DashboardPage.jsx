@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Sparkles, ArrowRight, Utensils, ChefHat, RefreshCw, Bookmark, FileDown } from "lucide-react";
 import DashboardNavbar from "../components/DashboardNavbar";
 
-// ─── Floating Orbs ────────────────────────────────────────────────────────────
 function FloatingOrbs() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -15,7 +14,6 @@ function FloatingOrbs() {
   );
 }
 
-// ─── Get Recipe Section ───────────────────────────────────────────────────────
 function GetRecipeSection() {
   const [ingredients, setIngredients] = useState("");
   const [generating, setGenerating] = useState(false);
@@ -27,7 +25,6 @@ function GetRecipeSection() {
     if (!hasInput) return;
     setGenerating(true);
     setGenerated(false);
-    // recipe generation logic goes here
     setTimeout(() => {
       setGenerating(false);
       setGenerated(true);
@@ -41,7 +38,7 @@ function GetRecipeSection() {
 
   return (
     <div className="max-w-3xl mx-auto w-full">
-      {/* Section Label */}
+
       <div className="text-center mb-10">
         <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 rounded-full px-4 py-1.5 text-sm font-semibold text-orange-300 mb-5">
           <Sparkles size={14} className="animate-pulse" />
@@ -58,17 +55,13 @@ function GetRecipeSection() {
         </p>
       </div>
 
-      {/* Generator Card */}
       <div className="bg-white/4 border border-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl">
-        {/* Input Label */}
         <label
           htmlFor="dash-ingredient-input"
           className="block text-xs font-bold uppercase tracking-widest text-white/30 mb-3"
         >
           Your Ingredients
         </label>
-
-        {/* Ingredient Input */}
         <div
           className={`flex items-start gap-2.5 bg-white/6 border rounded-2xl px-4 py-4 transition-all duration-200 ${
             ingredients.trim().length > 0
@@ -90,8 +83,6 @@ function GetRecipeSection() {
         <p className="text-xs text-white/20 mt-2 mb-6">
           Separate ingredients with commas or new lines.
         </p>
-
-        {/* Generate Button */}
         <button
           id="dash-generate-btn"
           onClick={handleGenerate}
@@ -121,8 +112,6 @@ function GetRecipeSection() {
           )}
         </button>
       </div>
-
-      {/* Recipe Output */}
       <div className={`mt-6 rounded-3xl transition-all duration-500 ${
         generated
           ? "bg-white/4 border border-white/10"
@@ -130,7 +119,6 @@ function GetRecipeSection() {
       } p-8`}>
         {generated ? (
           <>
-            {/* Mock Recipe Result */}
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center shadow-lg shadow-orange-500/25">
                 <ChefHat size={19} className="text-white" strokeWidth={2} />
@@ -170,8 +158,6 @@ function GetRecipeSection() {
           </div>
         )}
       </div>
-
-      {/* Action Buttons — visible only after recipe generated */}
       {generated && (
         <div className="flex flex-col sm:flex-row gap-3 mt-5">
           <button
@@ -204,13 +190,12 @@ function GetRecipeSection() {
   );
 }
 
-// ─── Dashboard Page ───────────────────────────────────────────────────────────
+
 export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <DashboardNavbar />
 
-      {/* Main Content */}
       <main className="relative pt-24 pb-20 px-6 min-h-screen flex items-start justify-center">
         <FloatingOrbs />
         <div className="relative z-10 w-full max-w-5xl pt-8">

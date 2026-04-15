@@ -1,11 +1,7 @@
-/* ─── ChefAI Global Styles ─────────────────────────────────── */
-
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -20,13 +16,11 @@ html {
   background: #fb923c88;
 }
 
-/* Selection color */
 ::selection {
   background: rgba(251, 146, 60, 0.25);
   color: white;
 }
 
-/* Navbar height utility */
 .h-18 {
   height: 4.5rem;
 }

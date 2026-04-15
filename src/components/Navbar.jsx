@@ -22,7 +22,6 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <div className="flex items-center justify-between h-18 py-4">
-          {/* Logo */}
           <a href="#" className="flex items-center gap-2.5 group" id="nav-logo">
             <div className="relative">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center shadow-lg shadow-orange-500/30 group-hover:shadow-orange-500/50 transition-all duration-300 group-hover:scale-110">
@@ -35,8 +34,6 @@ export default function Navbar() {
               <span className="bg-gradient-to-r from-orange-400 to-rose-400 bg-clip-text text-transparent">AI</span>
             </span>
           </a>
-
-          {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
             <a
               href="#home"
@@ -63,8 +60,6 @@ export default function Navbar() {
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-400 to-rose-400 rounded-full group-hover:w-full transition-all duration-300"></span>
             </a>
           </div>
-
-          {/* Auth Buttons */}
           <div className="hidden md:flex items-center gap-3">
             <Link
               to="/signin"
@@ -81,8 +76,6 @@ export default function Navbar() {
               Sign Up Free
             </Link>
           </div>
-
-          {/* Mobile Toggle */}
           <button
             id="nav-mobile-toggle"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -92,8 +85,6 @@ export default function Navbar() {
           </button>
         </div>
       </div>
-
-      {/* Mobile Menu */}
       <div
         className={`md:hidden overflow-hidden transition-all duration-300 ${
           menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"

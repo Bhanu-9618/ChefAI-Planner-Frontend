@@ -20,17 +20,13 @@ export default function SignUpPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      // 1. Register the user via the API
       await authService.register({ username: form.username, email: form.email, password: form.password });
       
-      // 2. Automatically log them in right after successful registration
       await login({ email: form.email, password: form.password });
       
-      // 3. Move to dashboard
       navigate("/dashboard");
     } catch (err) {
       console.error("Sign up failed:", err);
-      // Optional: Handle error message UI here
     } finally {
       setLoading(false);
     }
@@ -63,16 +59,13 @@ export default function SignUpPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] flex">
-      {/* ── Left Panel (decorative) ───────────────────────────────────────── */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden flex-col items-center justify-center p-16">
-        {/* Orbs */}
         <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-orange-500/10 blur-[120px] animate-pulse pointer-events-none"></div>
         <div
           className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] rounded-full bg-rose-500/8 blur-[100px] animate-pulse pointer-events-none"
           style={{ animationDelay: "2s" }}
         ></div>
 
-        {/* Grid pattern */}
         <div
           className="absolute inset-0 opacity-[0.04] pointer-events-none"
           style={{
@@ -81,10 +74,7 @@ export default function SignUpPage() {
             backgroundSize: "60px 60px",
           }}
         ></div>
-
-        {/* Content */}
         <div className="relative z-10 text-center">
-          {/* Logo */}
           <div className="flex items-center justify-center gap-3 mb-16">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center shadow-xl shadow-orange-500/30">
               <ChefHat size={24} className="text-white" strokeWidth={2} />
@@ -93,8 +83,6 @@ export default function SignUpPage() {
               Chef<span className="text-orange-400">AI</span>
             </span>
           </div>
-
-          {/* Headline */}
           <h2 className="text-4xl font-black text-white mb-4 leading-tight tracking-tight">
             Your Kitchen,{" "}
             <span className="bg-gradient-to-r from-orange-400 to-rose-400 bg-clip-text text-transparent">
@@ -104,8 +92,6 @@ export default function SignUpPage() {
           <p className="text-white/40 text-lg font-light max-w-sm mx-auto leading-relaxed mb-12">
             Type in your ingredients, get a perfect recipe, save it or download as a PDF — all in one place.
           </p>
-
-          {/* Feature pills */}
           <div className="flex flex-col gap-3 max-w-xs mx-auto">
             {[
               { emoji: "🥘", text: "Input ingredients, get instant recipes" },
@@ -124,13 +110,9 @@ export default function SignUpPage() {
         </div>
       </div>
 
-      {/* ── Right Panel (form) ────────────────────────────────────────────── */}
       <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-16 relative">
-        {/* Mobile orb */}
         <div className="absolute top-0 right-0 w-[300px] h-[300px] rounded-full bg-orange-500/8 blur-[80px] pointer-events-none lg:hidden"></div>
-
         <div className="w-full max-w-md relative z-10">
-          {/* Mobile logo */}
           <div className="flex items-center justify-center gap-2.5 mb-10 lg:hidden">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
               <ChefHat size={20} className="text-white" strokeWidth={2.2} />
@@ -139,8 +121,6 @@ export default function SignUpPage() {
               Chef<span className="text-orange-400">AI</span>
             </span>
           </div>
-
-          {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-black text-white tracking-tight mb-2">
               Create your account
@@ -156,8 +136,6 @@ export default function SignUpPage() {
               </Link>
             </p>
           </div>
-
-          {/* Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {fields.map((field) => (
               <div key={field.name}>
@@ -207,7 +185,6 @@ export default function SignUpPage() {
               </div>
             ))}
 
-            {/* Password strength hint */}
             {form.password.length > 0 && (
               <div className="flex gap-1.5 -mt-2">
                 {[1, 2, 3, 4].map((level) => (
@@ -238,12 +215,11 @@ export default function SignUpPage() {
               </div>
             )}
 
-            {/* Terms note */}
+
             <p className="text-xs text-white/25 leading-relaxed -mt-1">
               By signing up, you agree to use ChefAI to generate, save, and download your recipes.
             </p>
 
-              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
@@ -271,14 +247,12 @@ export default function SignUpPage() {
               </button>
           </form>
 
-          {/* Divider */}
           <div className="flex items-center gap-3 my-6">
             <div className="flex-1 h-px bg-white/8"></div>
             <span className="text-xs text-white/25 font-medium">or</span>
             <div className="flex-1 h-px bg-white/8"></div>
           </div>
 
-          {/* Sign in link */}
           <p className="text-center text-sm text-white/35">
             Already have an account?{" "}
             <Link
@@ -289,7 +263,6 @@ export default function SignUpPage() {
             </Link>
           </p>
 
-          {/* Back to home */}
           <div className="mt-8 text-center">
             <Link
               to="/"

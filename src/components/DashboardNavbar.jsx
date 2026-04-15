@@ -11,7 +11,6 @@ export default function DashboardNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -33,8 +32,6 @@ export default function DashboardNavbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0d0d0d]/95 backdrop-blur-xl border-b border-white/8">
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <div className="flex items-center justify-between h-16">
-
-          {/* Logo */}
           <Link to="/dashboard" className="flex items-center gap-2.5 group" id="dash-logo">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center shadow-lg shadow-orange-500/25 group-hover:shadow-orange-500/45 group-hover:scale-110 transition-all duration-300">
               <ChefHat size={18} className="text-white" strokeWidth={2.2} />
@@ -45,7 +42,6 @@ export default function DashboardNavbar() {
             </span>
           </Link>
 
-          {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link
@@ -64,7 +60,6 @@ export default function DashboardNavbar() {
             ))}
           </div>
 
-          {/* Profile Dropdown */}
           <div className="hidden md:flex items-center">
             <div className="relative" ref={dropdownRef}>
               <button
@@ -72,7 +67,6 @@ export default function DashboardNavbar() {
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="flex items-center gap-2.5 bg-white/5 hover:bg-white/8 border border-white/10 hover:border-white/20 rounded-xl px-3 py-2 transition-all duration-200 group"
               >
-                {/* Avatar */}
                 <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-xs font-bold text-white shadow-sm">
                   {user?.initials || user?.name?.slice(0, 2).toUpperCase() || "U"}
                 </div>
@@ -85,16 +79,12 @@ export default function DashboardNavbar() {
                 />
               </button>
 
-              {/* Dropdown Menu */}
               {dropdownOpen && (
                 <div className="absolute right-0 mt-2 w-52 bg-[#141414] border border-white/10 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
-                  {/* User Info */}
                   <div className="px-4 py-3 border-b border-white/8">
                     <p className="text-sm font-bold text-white truncate">{user?.name || "User"}</p>
                     <p className="text-xs text-white/35 truncate">{user?.email}</p>
                   </div>
-
-                  {/* Menu Items */}
                   <div className="p-1.5">
                     <Link
                       to="/dashboard/profile"
@@ -122,8 +112,6 @@ export default function DashboardNavbar() {
               )}
             </div>
           </div>
-
-          {/* Mobile toggle */}
           <button
             id="dash-mobile-toggle"
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -133,8 +121,6 @@ export default function DashboardNavbar() {
           </button>
         </div>
       </div>
-
-      {/* Mobile Menu */}
       <div className={`md:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? "max-h-72 opacity-100" : "max-h-0 opacity-0"}`}>
         <div className="border-t border-white/8 px-6 py-4 flex flex-col gap-2">
           {navLinks.map((link) => (
@@ -153,7 +139,6 @@ export default function DashboardNavbar() {
             </Link>
           ))}
           <hr className="border-white/8 my-1" />
-          {/* Mobile user */}
           <div className="flex items-center gap-3 px-4 py-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-xs font-bold text-white">
                 {user?.initials || user?.name?.slice(0, 2).toUpperCase() || "U"}

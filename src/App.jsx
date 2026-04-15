@@ -13,12 +13,10 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Routes */}
         <Route path="/" element={<><Navbar /><LandingPage /></>} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/signin" element={<SignInPage />} />
 
-        {/* Protected Routes — redirects to /signin if not logged in */}
         <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
         <Route path="/dashboard/my-recipes" element={<ProtectedRoute><MyRecipesPage /></ProtectedRoute>} />
         <Route path="/dashboard/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />

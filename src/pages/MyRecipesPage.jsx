@@ -2,7 +2,6 @@ import { useState } from "react";
 import { ChefHat, ChevronLeft, ChevronRight, FileDown, Utensils, CheckCircle2, Search, X } from "lucide-react";
 import DashboardNavbar from "../components/DashboardNavbar";
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
 const MOCK_RECIPES = [
   {
     id: 1,
@@ -156,20 +155,17 @@ const MOCK_RECIPES = [
 
 const PER_PAGE = 12;
 
-// ─── Recipe Detail Full Screen ────────────────────────────────────────────────
 function RecipeDetailView({ recipe, onBack }) {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <DashboardNavbar />
 
-      {/* Orb */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-5%] right-[-5%] w-[500px] h-[500px] rounded-full bg-orange-500/6 blur-[120px] animate-pulse"></div>
         <div className="absolute bottom-[5%] left-[-5%] w-[400px] h-[400px] rounded-full bg-rose-500/4 blur-[100px] animate-pulse" style={{ animationDelay: "2s" }}></div>
       </div>
 
       <main className="relative z-10 max-w-4xl mx-auto px-6 pt-28 pb-20">
-        {/* Back Button */}
         <button
           id="recipe-detail-back-btn"
           onClick={onBack}
@@ -178,8 +174,6 @@ function RecipeDetailView({ recipe, onBack }) {
           <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform duration-200" />
           Back to My Recipes
         </button>
-
-        {/* Hero Row */}
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 mb-10">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center shadow-xl shadow-orange-500/25 shrink-0">
@@ -192,8 +186,6 @@ function RecipeDetailView({ recipe, onBack }) {
               </h1>
             </div>
           </div>
-
-          {/* Download Button */}
           <button
             id="recipe-detail-download-btn"
             onClick={() => console.log("Download:", recipe.title)}
@@ -204,10 +196,7 @@ function RecipeDetailView({ recipe, onBack }) {
           </button>
         </div>
 
-
-        {/* Two Column Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Ingredients */}
           <div className="bg-white/4 border border-white/8 rounded-3xl p-7">
             <div className="flex items-center gap-2.5 mb-6">
               <div className="w-8 h-8 rounded-xl bg-orange-500/15 border border-orange-500/20 flex items-center justify-center">
@@ -228,8 +217,6 @@ function RecipeDetailView({ recipe, onBack }) {
               ))}
             </ul>
           </div>
-
-          {/* Instructions */}
           <div className="bg-white/4 border border-white/8 rounded-3xl p-7">
             <div className="flex items-center gap-2.5 mb-6">
               <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center">
@@ -256,14 +243,13 @@ function RecipeDetailView({ recipe, onBack }) {
   );
 }
 
-// ─── Recipe Card ──────────────────────────────────────────────────────────────
+
 function RecipeCard({ recipe, onClick }) {
   return (
     <div
       onClick={onClick}
       className="group bg-white/4 border border-white/8 hover:bg-white/7 hover:border-orange-500/25 rounded-2xl p-5 transition-all duration-300 cursor-pointer hover:shadow-lg hover:shadow-orange-500/5"
     >
-      {/* Card Header */}
       <div className="flex items-center gap-2 mb-3">
         <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform duration-300">
           <ChefHat size={14} className="text-white" strokeWidth={2.2} />
@@ -277,13 +263,9 @@ function RecipeCard({ recipe, onClick }) {
           <FileDown size={15} />
         </button>
       </div>
-
-      {/* Title */}
       <h3 className="text-white font-bold text-base mb-2 leading-snug group-hover:text-orange-100 transition-colors duration-200">
         {recipe.title}
       </h3>
-
-      {/* Ingredients */}
       <p className="text-white/35 text-xs leading-relaxed line-clamp-2">
         {recipe.ingredients}
       </p>
@@ -291,7 +273,7 @@ function RecipeCard({ recipe, onClick }) {
   );
 }
 
-// ─── Pagination ───────────────────────────────────────────────────────────────
+
 function Pagination({ currentPage, totalPages, onPageChange }) {
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
@@ -341,13 +323,11 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
   );
 }
 
-// ─── My Recipes Page ──────────────────────────────────────────────────────────
+
 export default function MyRecipesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-
-  // Show full-screen detail view when a recipe is selected
   if (selectedRecipe) {
     return <RecipeDetailView recipe={selectedRecipe} onBack={() => setSelectedRecipe(null)} />;
   }
@@ -368,21 +348,18 @@ export default function MyRecipesPage() {
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
-    setCurrentPage(1); // reset to page 1 on new search
+    setCurrentPage(1);
   };
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <DashboardNavbar />
-
-      {/* Orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-5%] right-[-5%] w-[400px] h-[400px] rounded-full bg-orange-500/5 blur-[120px] animate-pulse"></div>
         <div className="absolute bottom-[10%] left-[-5%] w-[300px] h-[300px] rounded-full bg-rose-500/4 blur-[100px] animate-pulse" style={{ animationDelay: "2s" }}></div>
       </div>
 
       <main className="relative z-10 max-w-6xl mx-auto px-6 pt-28 pb-20">
-        {/* Header */}
         <div className="mb-8">
           <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 rounded-full px-4 py-1.5 text-sm font-semibold text-orange-300 mb-4">
             <FileDown size={14} />
@@ -399,8 +376,6 @@ export default function MyRecipesPage() {
             {filtered.length > 0 && totalPages > 1 ? ` · Page ${currentPage} of ${totalPages}` : ""}
           </p>
         </div>
-
-        {/* Search Bar */}
         <div className="flex items-center gap-3 bg-white/5 border border-white/10 focus-within:border-orange-500/45 focus-within:bg-white/7 focus-within:shadow-lg focus-within:shadow-orange-500/8 rounded-2xl px-4 py-3.5 mb-8 transition-all duration-200">
           <Search size={16} className="text-white/25 shrink-0" />
           <input
@@ -420,8 +395,6 @@ export default function MyRecipesPage() {
             </button>
           )}
         </div>
-
-        {/* Cards Grid */}
         {currentRecipes.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {currentRecipes.map((recipe) => (
@@ -441,8 +414,6 @@ export default function MyRecipesPage() {
             <p className="text-white/18 text-sm">Try a different name or ingredient</p>
           </div>
         )}
-
-        {/* Pagination */}
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}

@@ -22,8 +22,6 @@ export default function SignInPage() {
       await login(form);
       navigate("/dashboard");
     } catch (err) {
-      console.error("Login failed:", err);
-      // You can add a toast notification here later
     } finally {
       setLoading(false);
     }
@@ -49,16 +47,13 @@ export default function SignInPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] flex">
-      {/* ── Left Panel (decorative) ─────────────────────────────────────── */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden flex-col items-center justify-center p-16">
-        {/* Orbs */}
         <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-orange-500/10 blur-[120px] animate-pulse pointer-events-none"></div>
         <div
           className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] rounded-full bg-rose-500/8 blur-[100px] animate-pulse pointer-events-none"
           style={{ animationDelay: "2s" }}
         ></div>
 
-        {/* Grid pattern */}
         <div
           className="absolute inset-0 opacity-[0.04] pointer-events-none"
           style={{
@@ -67,10 +62,7 @@ export default function SignInPage() {
             backgroundSize: "60px 60px",
           }}
         ></div>
-
-        {/* Content */}
         <div className="relative z-10 text-center">
-          {/* Logo */}
           <div className="flex items-center justify-center gap-3 mb-16">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center shadow-xl shadow-orange-500/30">
               <ChefHat size={24} className="text-white" strokeWidth={2} />
@@ -79,8 +71,6 @@ export default function SignInPage() {
               Chef<span className="text-orange-400">AI</span>
             </span>
           </div>
-
-          {/* Headline */}
           <h2 className="text-4xl font-black text-white mb-4 leading-tight tracking-tight">
             Welcome{" "}
             <span className="bg-gradient-to-r from-orange-400 to-rose-400 bg-clip-text text-transparent">
@@ -90,8 +80,6 @@ export default function SignInPage() {
           <p className="text-white/40 text-lg font-light max-w-sm mx-auto leading-relaxed mb-12">
             Your saved recipes are waiting. Sign in and get back to cooking smarter.
           </p>
-
-          {/* Decorative recipe card preview */}
           <div className="max-w-xs mx-auto bg-white/4 border border-white/8 rounded-2xl p-5 text-left">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center">
@@ -120,13 +108,9 @@ export default function SignInPage() {
         </div>
       </div>
 
-      {/* ── Right Panel (form) ───────────────────────────────────────────── */}
       <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-16 relative">
-        {/* Mobile orb */}
         <div className="absolute top-0 right-0 w-[300px] h-[300px] rounded-full bg-orange-500/8 blur-[80px] pointer-events-none lg:hidden"></div>
-
         <div className="w-full max-w-md relative z-10">
-          {/* Mobile logo */}
           <div className="flex items-center justify-center gap-2.5 mb-10 lg:hidden">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
               <ChefHat size={20} className="text-white" strokeWidth={2.2} />
@@ -135,8 +119,6 @@ export default function SignInPage() {
               Chef<span className="text-orange-400">AI</span>
             </span>
           </div>
-
-          {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl font-black text-white tracking-tight mb-2">
               Sign in to ChefAI
@@ -152,8 +134,6 @@ export default function SignInPage() {
               </Link>
             </p>
           </div>
-
-          {/* Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {fields.map((field) => (
               <div key={field.name}>
@@ -203,7 +183,6 @@ export default function SignInPage() {
               </div>
             ))}
 
-            {/* Forgot password */}
             <div className="flex justify-end -mt-2">
               <a
                 href="#"
@@ -213,8 +192,6 @@ export default function SignInPage() {
                 Forgot your password?
               </a>
             </div>
-
-            {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
@@ -240,15 +217,11 @@ export default function SignInPage() {
                 )}
               </button>
           </form>
-
-          {/* Divider */}
           <div className="flex items-center gap-3 my-6">
             <div className="flex-1 h-px bg-white/8"></div>
             <span className="text-xs text-white/25 font-medium">or</span>
             <div className="flex-1 h-px bg-white/8"></div>
           </div>
-
-          {/* Sign up link */}
           <p className="text-center text-sm text-white/35">
             New to ChefAI?{" "}
             <Link
@@ -258,8 +231,6 @@ export default function SignInPage() {
               Create a free account →
             </Link>
           </p>
-
-          {/* Back to home */}
           <div className="mt-8 text-center">
             <Link
               to="/"

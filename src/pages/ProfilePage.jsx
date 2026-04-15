@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import DashboardNavbar from "../components/DashboardNavbar";
 
-// ─── Mock user data ───────────────────────────────────────────────────────────
 const MOCK_USER = {
   id: 1,
   username: "john_doe",
@@ -30,7 +29,6 @@ const MOCK_USER = {
 
 const GOAL_OPTIONS = ["Weight Loss", "Muscle Gain", "Maintenance", "Healthy Eating", "Other"];
 
-// ─── Profile Info Row ─────────────────────────────────────────────────────────
 function InfoRow({ icon, label, value, accent = false }) {
   const IconComponent = icon;
   return (
@@ -46,7 +44,6 @@ function InfoRow({ icon, label, value, accent = false }) {
   );
 }
 
-// ─── Profile Page ─────────────────────────────────────────────────────────────
 export default function ProfilePage() {
   const [user, setUser] = useState(MOCK_USER);
   const [editing, setEditing] = useState(false);
@@ -106,15 +103,12 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <DashboardNavbar />
 
-      {/* Orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-5%] right-[-5%] w-[450px] h-[450px] rounded-full bg-orange-500/6 blur-[120px] animate-pulse"></div>
         <div className="absolute bottom-[5%] left-[-5%] w-[350px] h-[350px] rounded-full bg-rose-500/4 blur-[100px] animate-pulse" style={{ animationDelay: "2s" }}></div>
       </div>
 
       <main className="relative z-10 max-w-3xl mx-auto px-6 pt-28 pb-20">
-
-        {/* Back link */}
         <Link
           to="/dashboard"
           className="inline-flex items-center gap-2 text-sm text-white/35 hover:text-white transition-colors mb-8 group"
@@ -122,8 +116,6 @@ export default function ProfilePage() {
           <ChevronLeft size={15} className="group-hover:-translate-x-1 transition-transform duration-200" />
           Back to Dashboard
         </Link>
-
-        {/* Page Header */}
         <div className="flex items-center gap-4 mb-10">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center shadow-xl shadow-orange-500/25 text-2xl font-black text-white">
             {user.username.slice(0, 2).toUpperCase()}
@@ -133,8 +125,6 @@ export default function ProfilePage() {
             <p className="text-white/35 text-sm mt-0.5">{user.email}</p>
           </div>
         </div>
-
-        {/* Success Banner */}
         {saved && (
           <div className="flex items-center gap-3 bg-emerald-500/10 border border-emerald-500/25 rounded-2xl px-5 py-3.5 mb-6 animate-in fade-in duration-300">
             <Check size={16} className="text-emerald-400 shrink-0" />
@@ -143,7 +133,6 @@ export default function ProfilePage() {
         )}
 
         {!editing ? (
-          /* ── Profile View ───────────────────────────────────────────────── */
           <div>
             <div className="bg-white/4 border border-white/8 rounded-3xl p-7 mb-6">
               <div className="flex items-center justify-between mb-2">
@@ -159,8 +148,6 @@ export default function ProfilePage() {
               <InfoRow icon={Ruler}  label="Height"   value={`${user.height} cm`} />
               <InfoRow icon={Target} label="Goal"     value={user.goal} accent />
             </div>
-
-            {/* Update Button */}
             <button
               id="open-update-profile-btn"
               onClick={() => setEditing(true)}
@@ -171,7 +158,6 @@ export default function ProfilePage() {
             </button>
           </div>
         ) : (
-          /* ── Edit Form ──────────────────────────────────────────────────── */
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <div className="flex items-center justify-between mb-1">
               <h2 className="text-lg font-black text-white">Edit Profile</h2>
@@ -183,8 +169,6 @@ export default function ProfilePage() {
                 <X size={17} />
               </button>
             </div>
-
-            {/* Text fields */}
             {fields.map((field) => (
               <div key={field.name}>
                 <label
@@ -229,7 +213,6 @@ export default function ProfilePage() {
               </div>
             ))}
 
-            {/* Goal dropdown */}
             <div>
               <label
                 htmlFor="profile-goal"
@@ -265,8 +248,6 @@ export default function ProfilePage() {
                 </select>
               </div>
             </div>
-
-            {/* Action Buttons */}
             <div className="flex gap-3 pt-2">
               <button
                 type="submit"
