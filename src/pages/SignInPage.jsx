@@ -9,16 +9,24 @@ export default function SignInPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // 🔌 Replace with: const res = await api.post("/auth/login", form); login(res.data.user);
-    login({ email: form.email });
-    navigate("/dashboard");
+    setLoading(true);
+    try {
+      await login(form);
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Login failed:", err);
+      // You can add a toast notification here later
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fields = [
@@ -207,15 +215,30 @@ export default function SignInPage() {
             </div>
 
             {/* Submit */}
-            <button
-              type="submit"
-              id="signin-submit-btn"
-              className="mt-1 w-full py-4 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-400 hover:to-rose-400 text-white font-bold text-base rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-lg shadow-orange-500/25 hover:shadow-orange-500/45 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <Sparkles size={18} />
-              Sign In
-              <ArrowRight size={18} />
-            </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className={`w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300 shadow-xl ${
+                  loading
+                    ? "bg-gradient-to-r from-orange-500/70 to-rose-500/70 text-white/70 shadow-orange-500/10 cursor-not-allowed"
+                    : "bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-400 hover:to-rose-400 text-white shadow-orange-500/25 hover:shadow-orange-500/40 hover:scale-[1.02] active:scale-[0.98]"
+                }`}
+              >
+                {loading ? (
+                  <>
+                    <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                    </svg>
+                    Signing In...
+                  </>
+                ) : (
+                  <>
+                    Sign In
+                    <ArrowRight size={17} />
+                  </>
+                )}
+              </button>
           </form>
 
           {/* Divider */}

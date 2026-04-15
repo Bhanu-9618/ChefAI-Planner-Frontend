@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ChefHat, Eye, EyeOff, User, Mail, Lock, Sparkles, ArrowRight } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import authService from "../api/authService";
 
 export default function SignUpPage() {
   const { login } = useAuth();
@@ -9,16 +10,30 @@ export default function SignUpPage() {
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // 🔌 Replace with: const res = await api.post("/auth/register", form); login(res.data.user);
-    login({ email: form.email, name: form.username });
-    navigate("/dashboard");
+    setLoading(true);
+    try {
+      // 1. Register the user via the API
+      await authService.register({ username: form.username, email: form.email, password: form.password });
+      
+      // 2. Automatically log them in right after successful registration
+      await login({ email: form.email, password: form.password });
+      
+      // 3. Move to dashboard
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Sign up failed:", err);
+      // Optional: Handle error message UI here
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fields = [
@@ -228,16 +243,32 @@ export default function SignUpPage() {
               By signing up, you agree to use ChefAI to generate, save, and download your recipes.
             </p>
 
-            {/* Submit */}
-            <button
-              type="submit"
-              id="signup-submit-btn"
-              className="mt-1 w-full py-4 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-400 hover:to-rose-400 text-white font-bold text-base rounded-xl flex items-center justify-center gap-2 transition-all duration-300 shadow-lg shadow-orange-500/25 hover:shadow-orange-500/45 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <Sparkles size={18} />
-              Create Account
-              <ArrowRight size={18} />
-            </button>
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={loading}
+                className={`mt-1 w-full py-4 rounded-xl font-bold text-base flex items-center justify-center gap-2 transition-all duration-300 shadow-xl ${
+                  loading
+                    ? "bg-gradient-to-r from-orange-500/70 to-rose-500/70 text-white/70 shadow-orange-500/10 cursor-not-allowed"
+                    : "bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-400 hover:to-rose-400 text-white shadow-orange-500/25 hover:shadow-orange-500/40 hover:scale-[1.02] active:scale-[0.98]"
+                }`}
+              >
+                {loading ? (
+                  <>
+                    <svg className="animate-spin w-5 h-5 opacity-70" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                    </svg>
+                    Creating Account...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles size={18} />
+                    Create Account
+                    <ArrowRight size={18} />
+                  </>
+                )}
+              </button>
           </form>
 
           {/* Divider */}

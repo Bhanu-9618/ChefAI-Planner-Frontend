@@ -1,46 +1,55 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+import authService from "../api/authService";
 
 const AuthContext = createContext(null);
 
-// Mock user — replace with real API response later
-const MOCK_USER = {
-  id: 1,
-  name: "Nipun Dev",
-  email: "nipun@example.com",
-  initials: "ND",
-};
-
 export function AuthProvider({ children }) {
-  // Check sessionStorage so refresh doesn't log out during development
-  const [user, setUser] = useState(() => {
-    try {
-      const stored = sessionStorage.getItem("chefai_user");
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
-    }
-  });
-
-  const isLoggedIn = user !== null;
-
-  // ── login ──────────────────────────────────────────────────────────────────
-  // Replace the body of this function with your real API call later:
-  //   const res = await api.post("/auth/login", { email, password });
-  //   setUser(res.data.user);
-  const login = (credentials) => {
-    const loggedInUser = { ...MOCK_USER, email: credentials?.email || MOCK_USER.email };
-    setUser(loggedInUser);
-    sessionStorage.setItem("chefai_user", JSON.stringify(loggedInUser));
-  };
-
+  const [token, setToken] = useState(() => sessionStorage.getItem("chefai_token"));
+  const [user, setUser] = useState(null);
   // ── logout ─────────────────────────────────────────────────────────────────
   const logout = () => {
+    setToken(null);
     setUser(null);
-    sessionStorage.removeItem("chefai_user");
+    sessionStorage.removeItem("chefai_token");
   };
 
+  // Decode token whenever it changes
+  useEffect(() => {
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setUser({
+          ...decoded,
+          // Handle standard asp.net claims mapping if necessary later
+          // name: decoded.name || decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
+        });
+      } catch (error) {
+        console.error("Invalid token", error);
+        logout();
+      }
+    } else {
+      setUser(null);
+    }
+  }, [token]);
+
+  const isLoggedIn = token !== null;
+
+  // ── login ──────────────────────────────────────────────────────────────────
+  const login = async (credentials) => {
+    // Calls our API Layer
+    const response = await authService.login(credentials);
+    const receivedToken = response.token;
+
+    setToken(receivedToken);
+    sessionStorage.setItem("chefai_token", receivedToken);
+    return true;
+  };
+
+
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn, login, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoggedIn, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
