@@ -71,7 +71,7 @@ export default function DashboardNavbar() {
                   {user?.initials || user?.name?.slice(0, 2).toUpperCase() || "U"}
                 </div>
                 <span className="text-sm font-semibold text-white/80 group-hover:text-white transition-colors max-w-[120px] truncate">
-                  {user?.name || user?.email || "User"}
+                  {user?.username || user?.name || user?.email || "User"}
                 </span>
                 <ChevronDown
                   size={14}
@@ -82,7 +82,7 @@ export default function DashboardNavbar() {
               {dropdownOpen && (
                 <div className="absolute right-0 mt-2 w-52 bg-[#141414] border border-white/10 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
                   <div className="px-4 py-3 border-b border-white/8">
-                    <p className="text-sm font-bold text-white truncate">{user?.name || "User"}</p>
+                    <p className="text-sm font-bold text-white truncate">{user?.username || user?.name || "User"}</p>
                     <p className="text-xs text-white/35 truncate">{user?.email}</p>
                   </div>
                   <div className="p-1.5">
@@ -144,7 +144,7 @@ export default function DashboardNavbar() {
                 {user?.initials || user?.name?.slice(0, 2).toUpperCase() || "U"}
               </div>
               <div>
-                <p className="text-sm font-semibold text-white">{user?.name || "User"}</p>
+                <p className="text-sm font-semibold text-white">{user?.username || user?.name || "User"}</p>
                 <p className="text-xs text-white/35">{user?.email}</p>
               </div>
           </div>

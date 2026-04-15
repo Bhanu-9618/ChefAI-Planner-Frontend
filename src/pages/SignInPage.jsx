@@ -2,26 +2,96 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ChefHat, Eye, EyeOff, Mail, Lock, Sparkles, ArrowRight } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import authService from "../api/authService";
 
 export default function SignInPage() {
-  const { login } = useAuth();
+  const { setTokenFromResponse } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState("");
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!form.email || !form.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    if (!form.password) {
+      newErrors.password = "Password is required";
+    } else if (form.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    return newErrors;
+  };
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
+    }
+    setApiError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const newErrors = validateForm();
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     setLoading(true);
+    setApiError("");
+    setErrors({});
     try {
-      await login(form);
-      navigate("/dashboard");
+      const response = await authService.login({
+        email: form.email,
+        password: form.password,
+      });
+
+      console.log("Login response:", response);
+
+      if (response.token) {
+        setTokenFromResponse(response.token, response);
+        navigate("/dashboard");
+      }
     } catch (err) {
+      console.error("Login error:", err);
+      console.error("Error response:", err.response?.data);
+
+      if (err.response?.status === 401) {
+        const message = err.response.data?.message || "Invalid credentials";
+        if (message.toLowerCase().includes("email")) {
+          setErrors({ email: message });
+        } else {
+          setApiError(message);
+        }
+      } else if (err.response?.status === 400) {
+        const errorData = err.response.data;
+        if (errorData?.errors && typeof errorData.errors === "object") {
+          setErrors(errorData.errors);
+        } else if (errorData?.message) {
+          setApiError(errorData.message);
+        } else {
+          setApiError("Invalid input. Please check your details.");
+        }
+      } else if (err.message === "Network Error" || !err.response) {
+        setApiError("Cannot connect to server. Make sure the backend is running at http://localhost:5258");
+      } else if (err.response?.status === 500) {
+        setApiError("Server error. Please try again later.");
+      } else {
+        setApiError(err.response?.data?.message || "An error occurred during sign in. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -135,6 +205,11 @@ export default function SignInPage() {
             </p>
           </div>
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            {apiError && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-red-400 text-sm">
+                {apiError}
+              </div>
+            )}
             {fields.map((field) => (
               <div key={field.name}>
                 <label
@@ -145,7 +220,9 @@ export default function SignInPage() {
                 </label>
                 <div
                   className={`flex items-center gap-3 bg-white/5 border rounded-xl px-4 py-3.5 transition-all duration-200 ${
-                    focusedField === field.name
+                    errors[field.name]
+                      ? "border-red-500/60 bg-red-500/5"
+                      : focusedField === field.name
                       ? "border-orange-500/60 bg-white/8 shadow-lg shadow-orange-500/10"
                       : "border-white/10 hover:border-white/20"
                   }`}
@@ -153,7 +230,11 @@ export default function SignInPage() {
                   <field.icon
                     size={16}
                     className={`shrink-0 transition-colors duration-200 ${
-                      focusedField === field.name ? "text-orange-400" : "text-white/25"
+                      errors[field.name]
+                        ? "text-red-400"
+                        : focusedField === field.name
+                        ? "text-orange-400"
+                        : "text-white/25"
                     }`}
                   />
                   <input
@@ -165,7 +246,6 @@ export default function SignInPage() {
                     onFocus={() => setFocusedField(field.name)}
                     onBlur={() => setFocusedField(null)}
                     placeholder={field.placeholder}
-                    required
                     autoComplete={field.name === "password" ? "current-password" : "email"}
                     className="flex-1 bg-transparent text-sm text-white placeholder:text-white/20 outline-none"
                   />
@@ -180,6 +260,9 @@ export default function SignInPage() {
                     </button>
                   )}
                 </div>
+                {errors[field.name] && (
+                  <p className="text-red-400 text-xs mt-1.5">{errors[field.name]}</p>
+                )}
               </div>
             ))}
 
