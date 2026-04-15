@@ -1,32 +1,105 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ChefHat, Eye, EyeOff, User, Mail, Lock, Sparkles, ArrowRight } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
 import authService from "../api/authService";
 
 export default function SignUpPage() {
-  const { login } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState("");
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!form.username || !form.username.trim()) {
+      newErrors.username = "Username is required";
+    } else if (form.username.length < 3) {
+      newErrors.username = "Username must be at least 3 characters";
+    } else if (form.username.length > 100) {
+      newErrors.username = "Username must not exceed 100 characters";
+    }
+
+    if (!form.email || !form.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    if (!form.password) {
+      newErrors.password = "Password is required";
+    } else if (form.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+
+    return newErrors;
+  };
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
+    }
+    setApiError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const newErrors = validateForm();
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     setLoading(true);
+    setApiError("");
     try {
-      await authService.register({ username: form.username, email: form.email, password: form.password });
-      
-      await login({ email: form.email, password: form.password });
-      
-      navigate("/dashboard");
+      const response = await authService.register({
+        username: form.username,
+        email: form.email,
+        password: form.password,
+      });
+
+      console.log("Registration response:", response);
+
+      if (response.id || response) {
+        navigate("/signin");
+      }
     } catch (err) {
-      console.error("Sign up failed:", err);
+      console.error("Registration error:", err);
+      console.error("Error response:", err.response?.data);
+      
+      if (err.response?.status === 400) {
+        const errorData = err.response.data;
+        
+        if (errorData?.message) {
+          const message = errorData.message.toLowerCase();
+          if (message.includes("email")) {
+            setErrors({ email: errorData.message });
+          } else if (message.includes("username")) {
+            setErrors({ username: errorData.message });
+          } else {
+            setApiError(errorData.message);
+          }
+        } else if (errorData?.errors && typeof errorData.errors === "object") {
+          setErrors(errorData.errors);
+        } else if (typeof errorData === "string") {
+          setApiError(errorData);
+        } else {
+          setApiError("Invalid input. Please check your details.");
+        }
+      } else if (err.message === "Network Error" || !err.response) {
+        setApiError("Cannot connect to server. Make sure the backend is running at http://localhost:5258");
+      } else if (err.response?.status === 500) {
+        setApiError("Server error. Please try again later.");
+      } else {
+        setApiError(err.response?.data?.message || "An error occurred during registration. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -149,13 +222,19 @@ export default function SignUpPage() {
                   className={`flex items-center gap-3 bg-white/5 border rounded-xl px-4 py-3.5 transition-all duration-200 ${
                     focusedField === field.name
                       ? "border-orange-500/60 bg-white/8 shadow-lg shadow-orange-500/10"
+                      : errors[field.name]
+                      ? "border-red-500/50 bg-red-500/5"
                       : "border-white/10 hover:border-white/20"
                   }`}
                 >
                   <field.icon
                     size={16}
                     className={`shrink-0 transition-colors duration-200 ${
-                      focusedField === field.name ? "text-orange-400" : "text-white/25"
+                      focusedField === field.name
+                        ? "text-orange-400"
+                        : errors[field.name]
+                        ? "text-red-400"
+                        : "text-white/25"
                     }`}
                   />
                   <input
@@ -182,8 +261,18 @@ export default function SignUpPage() {
                     </button>
                   )}
                 </div>
+                {errors[field.name] && (
+                  <p className="text-xs text-red-400 mt-1">{errors[field.name]}</p>
+                )}
               </div>
             ))}
+
+            {apiError && (
+              <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/25 rounded-xl px-4 py-3">
+                <div className="w-2 h-2 rounded-full bg-red-400 shrink-0"></div>
+                <p className="text-sm text-red-300">{apiError}</p>
+              </div>
+            )}
 
             {form.password.length > 0 && (
               <div className="flex gap-1.5 -mt-2">

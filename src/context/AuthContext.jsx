@@ -40,9 +40,14 @@ export function AuthProvider({ children }) {
     return true;
   };
 
+  const setTokenFromResponse = (token) => {
+    setToken(token);
+    sessionStorage.setItem("chefai_token", token);
+  };
+
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoggedIn, login, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoggedIn, login, logout, setTokenFromResponse }}>
       {children}
     </AuthContext.Provider>
   );
