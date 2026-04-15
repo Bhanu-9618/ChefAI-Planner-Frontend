@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Sparkles, ArrowRight, Utensils, ChefHat, RefreshCw, Bookmark, FileDown } from "lucide-react";
 import DashboardNavbar from "../components/DashboardNavbar";
 import { downloadRecipeFile } from "../utils/downloadUtils";
+import { generateRecipe } from "../api/recipeService";
 
 function FloatingOrbs() {
   return (
@@ -19,23 +20,39 @@ function GetRecipeSection() {
   const [ingredients, setIngredients] = useState("");
   const [generating, setGenerating] = useState(false);
   const [generated, setGenerated] = useState(false);
+  const [recipeData, setRecipeData] = useState(null);
+  const [error, setError] = useState(null);
 
   const hasInput = ingredients.trim().length > 0;
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!hasInput) return;
     setGenerating(true);
     setGenerated(false);
-    setTimeout(() => {
-      setGenerating(false);
+    setError(null);
+    try {
+      // formatting the ingredients as a comma-separated string if it comes from newlines
+      const formattedIngredients = ingredients.split('\n').join(',').replace(/,+/g, ',');
+      const response = await generateRecipe(formattedIngredients);
+      setRecipeData(response);
       setGenerated(true);
-    }, 2000);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to generate recipe. Please try again.");
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const handleTryAnother = () => {
     setIngredients("");
     setGenerated(false);
+    setRecipeData(null);
+    setError(null);
   };
+
+  const ingredientList = recipeData?.ingredients ? recipeData.ingredients.split('\n').filter(item => item.trim()) : [];
+  const instructionList = recipeData?.instructions ? recipeData.instructions.split('\n').filter(item => item.trim()) : [];
 
   return (
     <div className="max-w-3xl mx-auto w-full">
@@ -114,11 +131,15 @@ function GetRecipeSection() {
         </button>
       </div>
       <div className={`mt-6 rounded-3xl transition-all duration-500 ${
-        generated
+        generated || error
           ? "bg-white/4 border border-white/10"
           : "bg-white/3 border border-dashed border-white/10"
       } p-8`}>
-        {generated ? (
+        {error ? (
+          <div className="text-center text-rose-400">
+            <p>{error}</p>
+          </div>
+        ) : generated && recipeData ? (
           <>
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center shadow-lg shadow-orange-500/25">
@@ -126,22 +147,32 @@ function GetRecipeSection() {
               </div>
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-orange-400/70">Generated Recipe</p>
-                <h3 className="text-white font-black text-lg">Garlic Herb Chicken</h3>
+                <h3 className="text-white font-black text-lg">{recipeData.title}</h3>
               </div>
             </div>
-            <div className="space-y-2.5 mb-2">
-              {[
-                "Season chicken with salt, pepper, and mixed herbs.",
-                "Heat olive oil in a pan over medium-high heat.",
-                "Sear chicken for 6–7 minutes each side until golden.",
-                "Add garlic and cook for 1 minute until fragrant.",
-                "Deglaze with a splash of lemon juice and serve.",
-              ].map((step, i) => (
-                <div key={i} className="flex gap-3 items-start">
-                  <span className="w-5 h-5 rounded-full bg-orange-500/15 border border-orange-500/20 text-orange-400 text-xs font-black flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
-                  <p className="text-sm text-white/60 leading-relaxed">{step}</p>
-                </div>
-              ))}
+
+            <div className="mb-4">
+              <p className="text-xs font-bold uppercase tracking-widest text-orange-400/70 mb-2">Ingredients</p>
+              <ul className="space-y-1.5 mb-2">
+                {ingredientList.map((step, i) => (
+                  <li key={i} className="flex gap-3 items-start">
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500/50 mt-2 shrink-0"></span>
+                    <p className="text-sm text-white/60 leading-relaxed">{step}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-orange-400/70 mb-2">Instructions</p>
+              <div className="space-y-2.5 mb-2">
+                {instructionList.map((step, i) => (
+                  <div key={i} className="flex gap-3 items-start">
+                    <span className="w-5 h-5 rounded-full bg-orange-500/15 border border-orange-500/20 text-orange-400 text-xs font-black flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
+                    <p className="text-sm text-white/60 leading-relaxed">{step}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </>
         ) : (
@@ -179,7 +210,7 @@ function GetRecipeSection() {
           </button>
           <button
             id="dash-download-btn"
-            onClick={() => downloadRecipeFile(1, "Garlic Herb Chicken")}
+            onClick={() => downloadRecipeFile(recipeData?.id || 1, recipeData?.title || "recipe")}
             className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-400 hover:to-rose-400 text-white text-sm font-bold rounded-2xl transition-all duration-300 shadow-lg shadow-orange-500/20 hover:shadow-orange-500/35 hover:scale-[1.02] active:scale-[0.98]"
           >
             <FileDown size={16} />

@@ -31,3 +31,12 @@ export const downloadRecipe = async (id) => {
   return response.data;
 };
 
+export const generateRecipe = async (ingredients) => {
+  // Pass the string directly. If it expects a quoted string, we can format it.
+  const response = await axiosClient.post(`/recipe/generate`, `"${ingredients}"`, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  return response.data;
+};
