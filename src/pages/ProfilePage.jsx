@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   ChefHat,
@@ -16,16 +16,8 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import DashboardNavbar from "../components/DashboardNavbar";
-
-const MOCK_USER = {
-  id: 1,
-  username: "john_doe",
-  email: "john@example.com",
-  role: "User",
-  weight: 75.5,
-  height: 180,
-  goal: "Weight Loss",
-};
+import userService from "../api/userService";
+import { useAuth } from "../context/AuthContext";
 
 const GOAL_OPTIONS = ["Weight Loss", "Muscle Gain", "Maintenance", "Healthy Eating", "Other"];
 
@@ -45,20 +37,53 @@ function InfoRow({ icon, label, value, accent = false }) {
 }
 
 export default function ProfilePage() {
-  const [user, setUser] = useState(MOCK_USER);
+  const { user: authUser } = useAuth();
+  const [user, setUser] = useState(null);
   const [editing, setEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
   const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [form, setForm] = useState({
-    username: user.username,
-    email: user.email,
+    username: "",
+    email: "",
     password: "",
-    weight: user.weight,
-    height: user.height,
-    goal: user.goal,
+    weight: "",
+    height: "",
+    goal: "",
   });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        const userId = authUser?.id || authUser?.Id;
+        if (!userId) {
+          setError("No user ID found. Please log in again.");
+          setLoading(false);
+          return;
+        }
+        const data = await userService.getUserProfile(userId);
+        setUser(data);
+        setForm({
+          username: data.username || "",
+          email: data.email || "",
+          password: "",
+          weight: data.weight || "",
+          height: data.height || "",
+          goal: data.goal || "",
+        });
+      } catch (err) {
+        console.error("Failed to load profile:", err);
+        setError("Could not load user profile.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, [authUser]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -98,6 +123,34 @@ export default function ProfilePage() {
     { name: "weight", label: "Weight (kg)", type: "number", icon: Weight, placeholder: "e.g. 75.5" },
     { name: "height", label: "Height (cm)", type: "number", icon: Ruler, placeholder: "e.g. 180" },
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] text-white">
+        <DashboardNavbar />
+        <main className="relative z-10 max-w-3xl mx-auto px-6 pt-28 pb-20 flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <ChefHat size={48} className="text-orange-400 animate-spin mx-auto mb-4" />
+            <p className="text-white/30 font-semibold text-base">Loading profile...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error || !user) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] text-white">
+        <DashboardNavbar />
+        <main className="relative z-10 max-w-3xl mx-auto px-6 pt-28 pb-20 flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <p className="text-white/30 font-semibold text-base mb-1">Failed to load profile</p>
+            <p className="text-white/18 text-sm">{error}</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
