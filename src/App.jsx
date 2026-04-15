@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
 import LandingPage from "./pages/LandingPage";
 import SignUpPage from "./pages/SignUpPage";
 import SignInPage from "./pages/SignInPage";
@@ -12,20 +13,15 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <Navbar />
-              <LandingPage />
-            </>
-          }
-        />
+        {/* Public Routes */}
+        <Route path="/" element={<><Navbar /><LandingPage /></>} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/signin" element={<SignInPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/dashboard/my-recipes" element={<MyRecipesPage />} />
-        <Route path="/dashboard/profile" element={<ProfilePage />} />
+
+        {/* Protected Routes — redirects to /signin if not logged in */}
+        <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+        <Route path="/dashboard/my-recipes" element={<ProtectedRoute><MyRecipesPage /></ProtectedRoute>} />
+        <Route path="/dashboard/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

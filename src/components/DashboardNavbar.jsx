@@ -1,20 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import {
-  ChefHat,
-  Sparkles,
-  BookmarkCheck,
-  User,
-  LogOut,
-  ChevronDown,
-  Menu,
-  X,
-} from "lucide-react";
-
-// Mock logged-in user — replace with real auth context later
-const MOCK_USER = { name: "Nipun Dev", email: "nipun@example.com", initials: "ND" };
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { ChefHat, Sparkles, BookmarkCheck, User, LogOut, ChevronDown, Menu, X } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 export default function DashboardNavbar() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const location = useLocation();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -83,10 +74,10 @@ export default function DashboardNavbar() {
               >
                 {/* Avatar */}
                 <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-xs font-bold text-white shadow-sm">
-                  {MOCK_USER.initials}
+                  {user?.initials || user?.name?.slice(0, 2).toUpperCase() || "U"}
                 </div>
                 <span className="text-sm font-semibold text-white/80 group-hover:text-white transition-colors max-w-[120px] truncate">
-                  {MOCK_USER.name}
+                  {user?.name || user?.email || "User"}
                 </span>
                 <ChevronDown
                   size={14}
@@ -99,8 +90,8 @@ export default function DashboardNavbar() {
                 <div className="absolute right-0 mt-2 w-52 bg-[#141414] border border-white/10 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150">
                   {/* User Info */}
                   <div className="px-4 py-3 border-b border-white/8">
-                    <p className="text-sm font-bold text-white truncate">{MOCK_USER.name}</p>
-                    <p className="text-xs text-white/35 truncate">{MOCK_USER.email}</p>
+                    <p className="text-sm font-bold text-white truncate">{user?.name || "User"}</p>
+                    <p className="text-xs text-white/35 truncate">{user?.email}</p>
                   </div>
 
                   {/* Menu Items */}
@@ -118,8 +109,8 @@ export default function DashboardNavbar() {
                       id="dash-logout-btn"
                       onClick={() => {
                         setDropdownOpen(false);
-                        // logout logic here
-                        console.log("Logging out...");
+                        logout();
+                        navigate("/signin");
                       }}
                       className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-sm text-rose-400/80 hover:text-rose-400 hover:bg-rose-500/8 transition-all duration-150"
                     >
@@ -165,17 +156,17 @@ export default function DashboardNavbar() {
           {/* Mobile user */}
           <div className="flex items-center gap-3 px-4 py-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-xs font-bold text-white">
-              {MOCK_USER.initials}
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-white">{MOCK_USER.name}</p>
-              <p className="text-xs text-white/35">{MOCK_USER.email}</p>
-            </div>
+                {user?.initials || user?.name?.slice(0, 2).toUpperCase() || "U"}
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-white">{user?.name || "User"}</p>
+                <p className="text-xs text-white/35">{user?.email}</p>
+              </div>
           </div>
           <Link to="/dashboard/profile" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 px-4 py-2 text-sm text-white/55 hover:text-white">
             <User size={14} /> My Profile
           </Link>
-          <button onClick={() => { setMobileOpen(false); console.log("Logging out..."); }} className="flex items-center gap-2 px-4 py-2 text-sm text-rose-400">
+          <button onClick={() => { logout(); navigate("/signin"); setMobileOpen(false); }} className="flex items-center gap-2 px-4 py-2 text-sm text-rose-400">
             <LogOut size={14} /> Log Out
           </button>
         </div>

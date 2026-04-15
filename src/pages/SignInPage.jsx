@@ -1,8 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ChefHat, Eye, EyeOff, Mail, Lock, Sparkles, ArrowRight } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 export default function SignInPage() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
@@ -13,8 +16,9 @@ export default function SignInPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // signin logic goes here
-    console.log("Sign in:", form);
+    // 🔌 Replace with: const res = await api.post("/auth/login", form); login(res.data.user);
+    login({ email: form.email });
+    navigate("/dashboard");
   };
 
   const fields = [
