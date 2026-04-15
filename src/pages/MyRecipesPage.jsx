@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChefHat, ChevronLeft, ChevronRight, FileDown, Utensils, CheckCircle2 } from "lucide-react";
+import { ChefHat, ChevronLeft, ChevronRight, FileDown, Utensils, CheckCircle2, Search, X } from "lucide-react";
 import DashboardNavbar from "../components/DashboardNavbar";
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
@@ -345,19 +345,30 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
 export default function MyRecipesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Show full-screen detail view when a recipe is selected
   if (selectedRecipe) {
     return <RecipeDetailView recipe={selectedRecipe} onBack={() => setSelectedRecipe(null)} />;
   }
 
-  const totalPages = Math.ceil(MOCK_RECIPES.length / PER_PAGE);
+  const filtered = MOCK_RECIPES.filter((r) => {
+    const q = searchQuery.toLowerCase();
+    return r.title.toLowerCase().includes(q) || r.ingredients.toLowerCase().includes(q);
+  });
+
+  const totalPages = Math.ceil(filtered.length / PER_PAGE);
   const startIdx = (currentPage - 1) * PER_PAGE;
-  const currentRecipes = MOCK_RECIPES.slice(startIdx, startIdx + PER_PAGE);
+  const currentRecipes = filtered.slice(startIdx, startIdx + PER_PAGE);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // reset to page 1 on new search
   };
 
   return (
@@ -372,7 +383,7 @@ export default function MyRecipesPage() {
 
       <main className="relative z-10 max-w-6xl mx-auto px-6 pt-28 pb-20">
         {/* Header */}
-        <div className="mb-10">
+        <div className="mb-8">
           <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/20 rounded-full px-4 py-1.5 text-sm font-semibold text-orange-300 mb-4">
             <FileDown size={14} />
             Saved Recipes
@@ -384,20 +395,52 @@ export default function MyRecipesPage() {
             </span>
           </h1>
           <p className="text-white/35 text-base font-light">
-            {MOCK_RECIPES.length} saved recipes · Page {currentPage} of {totalPages}
+            {filtered.length} recipe{filtered.length !== 1 ? "s" : ""}{searchQuery ? ` found for "${searchQuery}"` : " saved"}
+            {filtered.length > 0 && totalPages > 1 ? ` · Page ${currentPage} of ${totalPages}` : ""}
           </p>
         </div>
 
-        {/* Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {currentRecipes.map((recipe) => (
-            <RecipeCard
-              key={recipe.id}
-              recipe={recipe}
-              onClick={() => setSelectedRecipe(recipe)}
-            />
-          ))}
+        {/* Search Bar */}
+        <div className="flex items-center gap-3 bg-white/5 border border-white/10 focus-within:border-orange-500/45 focus-within:bg-white/7 focus-within:shadow-lg focus-within:shadow-orange-500/8 rounded-2xl px-4 py-3.5 mb-8 transition-all duration-200">
+          <Search size={16} className="text-white/25 shrink-0" />
+          <input
+            id="my-recipes-search"
+            type="text"
+            value={searchQuery}
+            onChange={handleSearch}
+            placeholder="Search by recipe name"
+            className="flex-1 bg-transparent text-sm text-white placeholder:text-white/20 outline-none"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => { setSearchQuery(""); setCurrentPage(1); }}
+              className="text-white/25 hover:text-white/60 transition-colors"
+            >
+              <X size={15} />
+            </button>
+          )}
         </div>
+
+        {/* Cards Grid */}
+        {currentRecipes.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {currentRecipes.map((recipe) => (
+              <RecipeCard
+                key={recipe.id}
+                recipe={recipe}
+                onClick={() => setSelectedRecipe(recipe)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-24 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center mb-4">
+              <Search size={24} className="text-white/20" />
+            </div>
+            <p className="text-white/30 font-semibold text-base mb-1">No recipes found</p>
+            <p className="text-white/18 text-sm">Try a different name or ingredient</p>
+          </div>
+        )}
 
         {/* Pagination */}
         <Pagination
