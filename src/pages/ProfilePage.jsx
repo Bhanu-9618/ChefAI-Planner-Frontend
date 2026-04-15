@@ -89,19 +89,39 @@ export default function ProfilePage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setUser((prev) => ({
-      ...prev,
-      username: form.username,
-      email: form.email,
-      weight: parseFloat(form.weight),
-      height: parseInt(form.height),
-      goal: form.goal,
-    }));
-    setEditing(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    
+    // Only send fields that are not empty/null
+    const payload = {};
+    if (form.username?.trim()) payload.username = form.username.trim();
+    if (form.email?.trim()) payload.email = form.email.trim();
+    if (form.password?.trim()) payload.password = form.password;
+    if (form.weight) payload.weight = parseFloat(form.weight);
+    if (form.height) payload.height = parseFloat(form.height);
+    if (form.goal?.trim()) payload.goal = form.goal;
+
+    try {
+      const userId = authUser?.id || authUser?.Id;
+      if (!userId) return;
+      
+      await userService.updateUserProfile(userId, payload);
+      
+      setUser((prev) => ({
+        ...prev,
+        username: payload.username || prev.username,
+        email: payload.email || prev.email,
+        weight: payload.weight || prev.weight,
+        height: payload.height || prev.height,
+        goal: payload.goal || prev.goal,
+      }));
+      
+      setEditing(false);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err) {
+      console.error("Failed to update profile", err);
+    }
   };
 
   const handleCancel = () => {

@@ -68,7 +68,7 @@ export default function DashboardNavbar() {
                 className="flex items-center gap-2.5 bg-white/5 hover:bg-white/8 border border-white/10 hover:border-white/20 rounded-xl px-3 py-2 transition-all duration-200 group"
               >
                 <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-xs font-bold text-white shadow-sm">
-                  {user?.initials || user?.name?.slice(0, 2).toUpperCase() || "U"}
+                  {user?.username?.charAt(0).toUpperCase() || user?.name?.charAt(0).toUpperCase() || "U"}
                 </div>
                 <span className="text-sm font-semibold text-white/80 group-hover:text-white transition-colors max-w-[120px] truncate">
                   {user?.username || user?.name || user?.email || "User"}
@@ -141,7 +141,7 @@ export default function DashboardNavbar() {
           <hr className="border-white/8 my-1" />
           <div className="flex items-center gap-3 px-4 py-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center text-xs font-bold text-white">
-                {user?.initials || user?.name?.slice(0, 2).toUpperCase() || "U"}
+                {user?.username?.charAt(0).toUpperCase() || user?.name?.charAt(0).toUpperCase() || "U"}
               </div>
               <div>
                 <p className="text-sm font-semibold text-white">{user?.username || user?.name || "User"}</p>
