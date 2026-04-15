@@ -14,3 +14,12 @@ export const getRecipeDetail = async (id) => {
   const response = await axiosClient.get(`/recipe/${id}`);
   return response.data;
 };
+
+export const searchRecipes = async (title) => {
+  const response = await axiosClient.get(`/recipe/search`, {
+    params: {
+      title,
+    },
+  });
+  return response.data;
+};

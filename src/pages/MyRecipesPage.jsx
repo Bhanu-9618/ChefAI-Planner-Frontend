@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ChefHat, ChevronLeft, ChevronRight, FileDown, Utensils, CheckCircle2, Search, X } from "lucide-react";
 import DashboardNavbar from "../components/DashboardNavbar";
-import { getMyRecipes, getRecipeDetail } from "../api/recipeService";
+import { getMyRecipes, getRecipeDetail, searchRecipes } from "../api/recipeService";
 
 function RecipeDetailView({ recipeId, onBack }) {
   const [recipe, setRecipe] = useState(null);
@@ -250,6 +250,10 @@ export default function MyRecipesPage() {
   const [totalRecipes, setTotalRecipes] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -268,8 +272,32 @@ export default function MyRecipesPage() {
       }
     };
 
-    fetchRecipes();
-  }, [currentPage]);
+    if (!isSearching) {
+      fetchRecipes();
+    }
+  }, [currentPage, isSearching]);
+
+  useEffect(() => {
+    const debounceTimer = setTimeout(async () => {
+      if (searchQuery.trim().length > 0) {
+        setIsSearching(true);
+        setSearchLoading(true);
+        try {
+          const results = await searchRecipes(searchQuery);
+          setSearchResults(results);
+        } catch (err) {
+          setSearchResults([]);
+        } finally {
+          setSearchLoading(false);
+        }
+      } else {
+        setIsSearching(false);
+        setSearchResults([]);
+      }
+    }, 500);
+
+    return () => clearTimeout(debounceTimer);
+  }, [searchQuery]);
 
   if (selectedRecipeId) {
     return <RecipeDetailView recipeId={selectedRecipeId} onBack={() => setSelectedRecipeId(null)} />;
@@ -281,6 +309,13 @@ export default function MyRecipesPage() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const displayRecipes = isSearching ? searchResults : recipes;
+  const displayTotalCount = isSearching ? searchResults.length : totalRecipes;
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
@@ -303,12 +338,59 @@ export default function MyRecipesPage() {
             </span>
           </h1>
           <p className="text-white/35 text-base font-light">
-            {totalRecipes} recipe{totalRecipes !== 1 ? "s" : ""} saved
-            {totalRecipes > 0 && totalPages > 1 ? ` · Page ${currentPage} of ${totalPages}` : ""}
+            {displayTotalCount} recipe{displayTotalCount !== 1 ? "s" : ""}{searchQuery ? ` found for "${searchQuery}"` : " saved"}
+            {displayTotalCount > 0 && !isSearching && totalPages > 1 ? ` · Page ${currentPage} of ${totalPages}` : ""}
           </p>
         </div>
 
-        {loading ? (
+        <div className="flex items-center gap-3 bg-white/5 border border-white/10 focus-within:border-orange-500/45 focus-within:bg-white/7 focus-within:shadow-lg focus-within:shadow-orange-500/8 rounded-2xl px-4 py-3.5 mb-8 transition-all duration-200">
+          <Search size={16} className="text-white/25 shrink-0" />
+          <input
+            id="my-recipes-search"
+            type="text"
+            value={searchQuery}
+            onChange={handleSearch}
+            placeholder="Search recipe by title"
+            className="flex-1 bg-transparent text-sm text-white placeholder:text-white/20 outline-none"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => { setSearchQuery(""); setSearchResults([]); setIsSearching(false); }}
+              className="text-white/25 hover:text-white/60 transition-colors"
+            >
+              <X size={15} />
+            </button>
+          )}
+        </div>
+
+        {isSearching ? (
+          searchLoading ? (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center mb-4">
+                <ChefHat size={24} className="text-orange-400 animate-spin" />
+              </div>
+              <p className="text-white/30 font-semibold text-base">Searching recipes...</p>
+            </div>
+          ) : searchResults.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {searchResults.map((recipe) => (
+                <RecipeCard
+                  key={recipe.id}
+                  recipe={recipe}
+                  onClick={() => setSelectedRecipeId(recipe.id)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center mb-4">
+                <Search size={24} className="text-white/20" />
+              </div>
+              <p className="text-white/30 font-semibold text-base mb-1">No recipes found</p>
+              <p className="text-white/18 text-sm">Try searching with different keywords</p>
+            </div>
+          )
+        ) : loading ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center mb-4">
               <ChefHat size={24} className="text-orange-400 animate-spin" />
