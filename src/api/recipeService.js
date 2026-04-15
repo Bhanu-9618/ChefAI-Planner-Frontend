@@ -9,3 +9,8 @@ export const getMyRecipes = async (page = 1, pageSize = 12) => {
   });
   return response.data;
 };
+
+export const getRecipeDetail = async (id) => {
+  const response = await axiosClient.get(`/recipe/${id}`);
+  return response.data;
+};

@@ -1,9 +1,74 @@
 import { useState, useEffect } from "react";
 import { ChefHat, ChevronLeft, ChevronRight, FileDown, Utensils, CheckCircle2, Search, X } from "lucide-react";
 import DashboardNavbar from "../components/DashboardNavbar";
-import { getMyRecipes } from "../api/recipeService";
+import { getMyRecipes, getRecipeDetail } from "../api/recipeService";
 
-function RecipeDetailView({ recipe, onBack }) {
+function RecipeDetailView({ recipeId, onBack }) {
+  const [recipe, setRecipe] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRecipeDetail = async () => {
+      try {
+        setLoading(true);
+        const data = await getRecipeDetail(recipeId);
+        setRecipe(data);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+        setRecipe(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecipeDetail();
+  }, [recipeId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] text-white">
+        <DashboardNavbar />
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-5%] right-[-5%] w-[500px] h-[500px] rounded-full bg-orange-500/6 blur-[120px] animate-pulse"></div>
+          <div className="absolute bottom-[5%] left-[-5%] w-[400px] h-[400px] rounded-full bg-rose-500/4 blur-[100px] animate-pulse" style={{ animationDelay: "2s" }}></div>
+        </div>
+        <main className="relative z-10 max-w-4xl mx-auto px-6 pt-28 pb-20 flex items-center justify-center min-h-96">
+          <div className="text-center">
+            <ChefHat size={48} className="text-orange-400 animate-spin mx-auto mb-4" />
+            <p className="text-white/30 font-semibold text-base">Loading recipe...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error || !recipe) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] text-white">
+        <DashboardNavbar />
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[-5%] right-[-5%] w-[500px] h-[500px] rounded-full bg-orange-500/6 blur-[120px] animate-pulse"></div>
+          <div className="absolute bottom-[5%] left-[-5%] w-[400px] h-[400px] rounded-full bg-rose-500/4 blur-[100px] animate-pulse" style={{ animationDelay: "2s" }}></div>
+        </div>
+        <main className="relative z-10 max-w-4xl mx-auto px-6 pt-28 pb-20">
+          <button
+            onClick={onBack}
+            className="flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors mb-8 group"
+          >
+            <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform duration-200" />
+            Back to My Recipes
+          </button>
+          <div className="text-center py-12">
+            <p className="text-white/30 font-semibold text-base mb-1">Failed to load recipe</p>
+            <p className="text-white/18 text-sm">{error}</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   const ingredientList = recipe.ingredients.split('\n').filter(item => item.trim());
   const instructionList = recipe.instructions.split('\n').filter(item => item.trim());
 
@@ -179,7 +244,7 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
 
 export default function MyRecipesPage() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [selectedRecipeId, setSelectedRecipeId] = useState(null);
   const [recipes, setRecipes] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecipes, setTotalRecipes] = useState(0);
@@ -206,8 +271,8 @@ export default function MyRecipesPage() {
     fetchRecipes();
   }, [currentPage]);
 
-  if (selectedRecipe) {
-    return <RecipeDetailView recipe={selectedRecipe} onBack={() => setSelectedRecipe(null)} />;
+  if (selectedRecipeId) {
+    return <RecipeDetailView recipeId={selectedRecipeId} onBack={() => setSelectedRecipeId(null)} />;
   }
 
   const handlePageChange = (page) => {
@@ -265,7 +330,7 @@ export default function MyRecipesPage() {
                 <RecipeCard
                   key={recipe.id}
                   recipe={recipe}
-                  onClick={() => setSelectedRecipe(recipe)}
+                  onClick={() => setSelectedRecipeId(recipe.id)}
                 />
               ))}
             </div>
