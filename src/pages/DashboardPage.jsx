@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Sparkles, ArrowRight, Utensils, ChefHat, RefreshCw, Bookmark } from "lucide-react";
 import DashboardNavbar from "../components/DashboardNavbar";
-import { generateRecipe } from "../api/recipeService";
+import { generateRecipe, saveRecipe } from "../api/recipeService";
+import { useAuth } from "../context/AuthContext";
 
 function FloatingOrbs() {
   return (
@@ -16,11 +17,14 @@ function FloatingOrbs() {
 }
 
 function GetRecipeSection() {
+  const { user: authUser } = useAuth();
   const [ingredients, setIngredients] = useState("");
   const [generating, setGenerating] = useState(false);
   const [generated, setGenerated] = useState(false);
   const [recipeData, setRecipeData] = useState(null);
   const [error, setError] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   const hasInput = ingredients.trim().length > 0;
 
@@ -44,10 +48,36 @@ function GetRecipeSection() {
   };
 
   const handleTryAnother = () => {
-    setIngredients("");
-    setGenerated(false);
-    setRecipeData(null);
-    setError(null);
+    setSaved(false);
+    handleGenerate();
+  };
+
+  const handleSaveRecipe = async () => {
+    if (!recipeData) return;
+    
+    setSaving(true);
+    try {
+      const userId = authUser?.id || authUser?.Id || 0;
+      
+      const payload = {
+        title: recipeData.title,
+        ingredients: recipeData.ingredients,
+        instructions: recipeData.instructions,
+        imageUrl: null,
+        createdAt: new Date().toISOString(),
+        userId: userId,
+        user: null
+      };
+      
+      await saveRecipe(payload);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err) {
+      console.error("Failed to save recipe", err);
+      // Optional: set a saving error if needed
+    } finally {
+      setSaving(false);
+    }
   };
 
   const ingredientList = recipeData?.ingredients ? recipeData.ingredients.split('\n').filter(item => item.trim()) : [];
@@ -201,11 +231,16 @@ function GetRecipeSection() {
           </button>
           <button
             id="dash-save-btn"
-            onClick={() => console.log("Save recipe")}
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-emerald-500/10 hover:bg-emerald-500/18 border border-emerald-500/25 hover:border-emerald-500/40 text-emerald-300 hover:text-emerald-200 text-sm font-semibold rounded-2xl transition-all duration-200"
+            onClick={handleSaveRecipe}
+            disabled={saving || saved}
+            className={`flex-1 flex items-center justify-center gap-2 py-3.5 border rounded-2xl transition-all duration-200 text-sm font-semibold ${
+              saved 
+                ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300"
+                : "bg-emerald-500/10 hover:bg-emerald-500/18 border-emerald-500/25 hover:border-emerald-500/40 text-emerald-300 hover:text-emerald-200"
+            }`}
           >
             <Bookmark size={16} />
-            Save Recipe
+            {saving ? "Saving..." : saved ? "Saved!" : "Save Recipe"}
           </button>
         </div>
       )}

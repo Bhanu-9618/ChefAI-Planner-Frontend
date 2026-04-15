@@ -40,3 +40,8 @@ export const generateRecipe = async (ingredients) => {
   });
   return response.data;
 };
+
+export const saveRecipe = async (recipeData) => {
+  const response = await axiosClient.post(`/recipe/save`, recipeData);
+  return response.data;
+};
