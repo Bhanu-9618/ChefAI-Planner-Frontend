@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Sparkles, ArrowRight, Utensils, ChefHat, RefreshCw, Bookmark, FileDown } from "lucide-react";
 import DashboardNavbar from "../components/DashboardNavbar";
+import { downloadRecipeFile } from "../utils/downloadUtils";
 
 function FloatingOrbs() {
   return (
@@ -178,7 +179,7 @@ function GetRecipeSection() {
           </button>
           <button
             id="dash-download-btn"
-            onClick={() => console.log("Download PDF")}
+            onClick={() => downloadRecipeFile(1, "Garlic Herb Chicken")}
             className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-400 hover:to-rose-400 text-white text-sm font-bold rounded-2xl transition-all duration-300 shadow-lg shadow-orange-500/20 hover:shadow-orange-500/35 hover:scale-[1.02] active:scale-[0.98]"
           >
             <FileDown size={16} />

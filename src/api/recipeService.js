@@ -23,3 +23,11 @@ export const searchRecipes = async (title) => {
   });
   return response.data;
 };
+
+export const downloadRecipe = async (id) => {
+  const response = await axiosClient.get(`/recipe/download/${id}`, {
+    responseType: 'blob',
+  });
+  return response.data;
+};
+

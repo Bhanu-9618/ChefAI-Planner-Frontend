@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { ChefHat, ChevronLeft, ChevronRight, FileDown, Utensils, CheckCircle2, Search, X } from "lucide-react";
 import DashboardNavbar from "../components/DashboardNavbar";
 import { getMyRecipes, getRecipeDetail, searchRecipes } from "../api/recipeService";
+import { downloadRecipeFile } from "../utils/downloadUtils";
 
 function RecipeDetailView({ recipeId, onBack }) {
   const [recipe, setRecipe] = useState(null);
@@ -104,7 +105,7 @@ function RecipeDetailView({ recipeId, onBack }) {
           </div>
           <button
             id="recipe-detail-download-btn"
-            onClick={() => console.log("Download:", recipe.title)}
+            onClick={() => downloadRecipeFile(recipe.id, recipe.title)}
             className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-400 hover:to-rose-400 text-white font-bold text-sm rounded-2xl transition-all duration-300 shadow-xl shadow-orange-500/25 hover:shadow-orange-500/40 hover:scale-105 shrink-0"
           >
             <FileDown size={17} />
@@ -176,7 +177,7 @@ function RecipeCard({ recipe, onClick }) {
           id={`download-card-${recipe.id}`}
           title="Download PDF"
           className="ml-auto p-1.5 rounded-lg text-white/20 hover:text-orange-400 hover:bg-orange-500/10 transition-all duration-200"
-          onClick={(e) => { e.stopPropagation(); console.log("Download", recipe.title); }}
+          onClick={(e) => { e.stopPropagation(); downloadRecipeFile(recipe.id, recipe.title); }}
         >
           <FileDown size={15} />
         </button>
@@ -286,6 +287,7 @@ export default function MyRecipesPage() {
           const results = await searchRecipes(searchQuery);
           setSearchResults(results);
         } catch (err) {
+          console.error("Search failed:", err);
           setSearchResults([]);
         } finally {
           setSearchLoading(false);
@@ -314,7 +316,7 @@ export default function MyRecipesPage() {
     setSearchQuery(e.target.value);
   };
 
-  const displayRecipes = isSearching ? searchResults : recipes;
+  // displayRecipes variable removed to fix linting issue
   const displayTotalCount = isSearching ? searchResults.length : totalRecipes;
 
   return (
