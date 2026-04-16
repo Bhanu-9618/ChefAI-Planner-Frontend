@@ -3,18 +3,9 @@ import { Sparkles, ArrowRight, Utensils, ChefHat, RefreshCw, Bookmark } from "lu
 import DashboardNavbar from "../components/DashboardNavbar";
 import { generateRecipe, saveRecipe } from "../api/recipeService";
 import { useAuth } from "../context/AuthContext";
+import FloatingOrbs from "../components/FloatingOrbs";
+import Spinner from "../components/Spinner";
 
-function FloatingOrbs() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <div className="absolute top-[-5%] right-[-5%] w-[500px] h-[500px] rounded-full bg-orange-500/6 blur-[120px] animate-pulse"></div>
-      <div
-        className="absolute bottom-[10%] left-[-5%] w-[400px] h-[400px] rounded-full bg-rose-500/5 blur-[100px] animate-pulse"
-        style={{ animationDelay: "2s" }}
-      ></div>
-    </div>
-  );
-}
 
 function GetRecipeSection() {
   const { user: authUser } = useAuth();
@@ -144,10 +135,7 @@ function GetRecipeSection() {
         >
           {generating ? (
             <>
-              <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-              </svg>
+              <Spinner opacity="opacity-25" />
               Generating your recipe...
             </>
           ) : (
