@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
-import { ChefHat, ChevronLeft, ChevronRight, FileDown, Utensils, CheckCircle2, Search, X } from "lucide-react";
+import { ChefHat, ChevronLeft, FileDown, Utensils, CheckCircle2, Search, X } from "lucide-react";
 import DashboardNavbar from "../components/DashboardNavbar";
 import { getMyRecipes, getRecipeDetail, searchRecipes } from "../api/recipeService";
 import { downloadRecipeFile } from "../utils/downloadUtils";
+import FloatingOrbs from "../components/FloatingOrbs";
+import StateFeedbackBox from "../components/StateFeedbackBox";
+import RecipeCard from "../components/RecipeCard";
+import Pagination from "../components/Pagination";
 
 function RecipeDetailView({ recipeId, onBack }) {
   const [recipe, setRecipe] = useState(null);
@@ -31,15 +35,9 @@ function RecipeDetailView({ recipeId, onBack }) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] text-white">
         <DashboardNavbar />
-        <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[-5%] right-[-5%] w-[500px] h-[500px] rounded-full bg-orange-500/6 blur-[120px] animate-pulse"></div>
-          <div className="absolute bottom-[5%] left-[-5%] w-[400px] h-[400px] rounded-full bg-rose-500/4 blur-[100px] animate-pulse" style={{ animationDelay: "2s" }}></div>
-        </div>
+        <FloatingOrbs position="fixed" />
         <main className="relative z-10 max-w-4xl mx-auto px-6 pt-28 pb-20 flex items-center justify-center min-h-96">
-          <div className="text-center">
-            <ChefHat size={48} className="text-orange-400 animate-spin mx-auto mb-4" />
-            <p className="text-white/30 font-semibold text-base">Loading recipe...</p>
-          </div>
+          <StateFeedbackBox icon={ChefHat} title="Loading recipe..." isSpinning={true} iconClassName="text-orange-400" />
         </main>
       </div>
     );
@@ -49,10 +47,7 @@ function RecipeDetailView({ recipeId, onBack }) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] text-white">
         <DashboardNavbar />
-        <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[-5%] right-[-5%] w-[500px] h-[500px] rounded-full bg-orange-500/6 blur-[120px] animate-pulse"></div>
-          <div className="absolute bottom-[5%] left-[-5%] w-[400px] h-[400px] rounded-full bg-rose-500/4 blur-[100px] animate-pulse" style={{ animationDelay: "2s" }}></div>
-        </div>
+        <FloatingOrbs position="fixed" />
         <main className="relative z-10 max-w-4xl mx-auto px-6 pt-28 pb-20">
           <button
             onClick={onBack}
@@ -61,10 +56,7 @@ function RecipeDetailView({ recipeId, onBack }) {
             <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform duration-200" />
             Back to My Recipes
           </button>
-          <div className="text-center py-12">
-            <p className="text-white/30 font-semibold text-base mb-1">Failed to load recipe</p>
-            <p className="text-white/18 text-sm">{error}</p>
-          </div>
+          <StateFeedbackBox icon={Search} title="Failed to load recipe" subtitle={error} />
         </main>
       </div>
     );
@@ -76,11 +68,7 @@ function RecipeDetailView({ recipeId, onBack }) {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <DashboardNavbar />
-
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-5%] right-[-5%] w-[500px] h-[500px] rounded-full bg-orange-500/6 blur-[120px] animate-pulse"></div>
-        <div className="absolute bottom-[5%] left-[-5%] w-[400px] h-[400px] rounded-full bg-rose-500/4 blur-[100px] animate-pulse" style={{ animationDelay: "2s" }}></div>
-      </div>
+      <FloatingOrbs position="fixed" />
 
       <main className="relative z-10 max-w-4xl mx-auto px-6 pt-28 pb-20">
         <button
@@ -160,89 +148,6 @@ function RecipeDetailView({ recipeId, onBack }) {
   );
 }
 
-
-function RecipeCard({ recipe, onClick }) {
-  const ingredientPreview = recipe.ingredients?.split('\n')[0] || recipe.ingredients;
-
-  return (
-    <div
-      onClick={onClick}
-      className="group bg-white/4 border border-white/8 hover:bg-white/7 hover:border-orange-500/25 rounded-2xl p-5 transition-all duration-300 cursor-pointer hover:shadow-lg hover:shadow-orange-500/5"
-    >
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition-transform duration-300">
-          <ChefHat size={14} className="text-white" strokeWidth={2.2} />
-        </div>
-        <button
-          id={`download-card-${recipe.id}`}
-          title="Download PDF"
-          className="ml-auto p-1.5 rounded-lg text-white/20 hover:text-orange-400 hover:bg-orange-500/10 transition-all duration-200"
-          onClick={(e) => { e.stopPropagation(); downloadRecipeFile(recipe.id, recipe.title); }}
-        >
-          <FileDown size={15} />
-        </button>
-      </div>
-      <h3 className="text-white font-bold text-base mb-2 leading-snug group-hover:text-orange-100 transition-colors duration-200">
-        {recipe.title}
-      </h3>
-      <p className="text-white/35 text-xs leading-relaxed line-clamp-2">
-        {ingredientPreview}
-      </p>
-    </div>
-  );
-}
-
-
-function Pagination({ currentPage, totalPages, onPageChange }) {
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-
-  return (
-    <div className="flex items-center justify-center gap-2 mt-10">
-      <button
-        id="pagination-prev"
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        className={`p-2.5 rounded-xl border transition-all duration-200 ${
-          currentPage === 1
-            ? "border-white/6 text-white/15 cursor-not-allowed"
-            : "border-white/10 text-white/50 hover:text-white hover:bg-white/8 hover:border-white/20"
-        }`}
-      >
-        <ChevronLeft size={16} />
-      </button>
-
-      {pages.map((page) => (
-        <button
-          key={page}
-          id={`pagination-page-${page}`}
-          onClick={() => onPageChange(page)}
-          className={`w-9 h-9 rounded-xl text-sm font-semibold border transition-all duration-200 ${
-            page === currentPage
-              ? "bg-gradient-to-br from-orange-500 to-rose-500 border-transparent text-white shadow-lg shadow-orange-500/25"
-              : "border-white/10 text-white/45 hover:text-white hover:bg-white/8 hover:border-white/20"
-          }`}
-        >
-          {page}
-        </button>
-      ))}
-
-      <button
-        id="pagination-next"
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className={`p-2.5 rounded-xl border transition-all duration-200 ${
-          currentPage === totalPages
-            ? "border-white/6 text-white/15 cursor-not-allowed"
-            : "border-white/10 text-white/50 hover:text-white hover:bg-white/8 hover:border-white/20"
-        }`}
-      >
-        <ChevronRight size={16} />
-      </button>
-    </div>
-  );
-}
-
-
 export default function MyRecipesPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedRecipeId, setSelectedRecipeId] = useState(null);
@@ -316,16 +221,12 @@ export default function MyRecipesPage() {
     setSearchQuery(e.target.value);
   };
 
-  // displayRecipes variable removed to fix linting issue
   const displayTotalCount = isSearching ? searchResults.length : totalRecipes;
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       <DashboardNavbar />
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-5%] right-[-5%] w-[400px] h-[400px] rounded-full bg-orange-500/5 blur-[120px] animate-pulse"></div>
-        <div className="absolute bottom-[10%] left-[-5%] w-[300px] h-[300px] rounded-full bg-rose-500/4 blur-[100px] animate-pulse" style={{ animationDelay: "2s" }}></div>
-      </div>
+      <FloatingOrbs position="fixed" />
 
       <main className="relative z-10 max-w-6xl mx-auto px-6 pt-28 pb-20">
         <div className="mb-8">
@@ -367,12 +268,7 @@ export default function MyRecipesPage() {
 
         {isSearching ? (
           searchLoading ? (
-            <div className="flex flex-col items-center justify-center py-24 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center mb-4">
-                <ChefHat size={24} className="text-orange-400 animate-spin" />
-              </div>
-              <p className="text-white/30 font-semibold text-base">Searching recipes...</p>
-            </div>
+            <StateFeedbackBox icon={ChefHat} title="Searching recipes..." isSpinning={true} iconClassName="text-orange-400" />
           ) : searchResults.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {searchResults.map((recipe) => (
@@ -384,29 +280,12 @@ export default function MyRecipesPage() {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-24 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center mb-4">
-                <Search size={24} className="text-white/20" />
-              </div>
-              <p className="text-white/30 font-semibold text-base mb-1">No recipes found</p>
-              <p className="text-white/18 text-sm">Try searching with different keywords</p>
-            </div>
+            <StateFeedbackBox icon={Search} title="No recipes found" subtitle="Try searching with different keywords" />
           )
         ) : loading ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center mb-4">
-              <ChefHat size={24} className="text-orange-400 animate-spin" />
-            </div>
-            <p className="text-white/30 font-semibold text-base">Loading recipes...</p>
-          </div>
+          <StateFeedbackBox icon={ChefHat} title="Loading recipes..." isSpinning={true} iconClassName="text-orange-400" />
         ) : error ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center mb-4">
-              <Search size={24} className="text-white/20" />
-            </div>
-            <p className="text-white/30 font-semibold text-base mb-1">Failed to load recipes</p>
-            <p className="text-white/18 text-sm">{error}</p>
-          </div>
+          <StateFeedbackBox icon={Search} title="Failed to load recipes" subtitle={error} />
         ) : recipes.length > 0 ? (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
@@ -427,13 +306,7 @@ export default function MyRecipesPage() {
             )}
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/8 flex items-center justify-center mb-4">
-              <Search size={24} className="text-white/20" />
-            </div>
-            <p className="text-white/30 font-semibold text-base mb-1">No recipes found</p>
-            <p className="text-white/18 text-sm">Start creating your first recipe</p>
-          </div>
+          <StateFeedbackBox icon={Search} title="No recipes found" subtitle="Start creating your first recipe" />
         )}
       </main>
     </div>
