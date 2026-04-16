@@ -22,6 +22,7 @@ export function AuthProvider({ children }) {
     if (token) {
       try {
         const decoded = jwtDecode(token);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUser((prevUser) => ({
           ...prevUser,
           ...decoded,
@@ -65,6 +66,7 @@ export function AuthProvider({ children }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used inside <AuthProvider>");

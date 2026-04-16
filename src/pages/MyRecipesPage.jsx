@@ -162,7 +162,7 @@ function RecipeDetailView({ recipeId, onBack }) {
 
 
 function RecipeCard({ recipe, onClick }) {
-  const ingredientPreview = recipe.ingredients.split('\n')[0] || recipe.ingredients;
+  const ingredientPreview = recipe.ingredients?.split('\n')[0] || recipe.ingredients;
 
   return (
     <div
