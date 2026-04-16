@@ -91,7 +91,7 @@ export default function SignInPage() {
           setApiError("Invalid input. Please check your details.");
         }
       } else if (err.message === "Network Error" || !err.response) {
-        setApiError("Cannot connect to server. Make sure the backend is running at http://localhost:5258");
+        setApiError("Cannot connect to server. Please ensure the backend is reachable.");
       } else if (err.response?.status === 500) {
         setApiError("Server error. Please try again later.");
       } else {
