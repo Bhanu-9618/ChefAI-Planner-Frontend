@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ChefHat, Eye, EyeOff, Mail, Lock, Sparkles, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, Sparkles, ArrowRight } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import authService from "../api/authService";
+import InputField from "../components/InputField";
+import AuthBackgroundGrid from "../components/AuthBackgroundGrid";
+import Logo from "../components/Logo";
+import AuthDivider from "../components/AuthDivider";
+import Spinner from "../components/Spinner";
 
 export default function SignInPage() {
   const { setTokenFromResponse } = useAuth();
@@ -118,28 +123,10 @@ export default function SignInPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] flex">
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden flex-col items-center justify-center p-16">
-        <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-orange-500/10 blur-[120px] animate-pulse pointer-events-none"></div>
-        <div
-          className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] rounded-full bg-rose-500/8 blur-[100px] animate-pulse pointer-events-none"
-          style={{ animationDelay: "2s" }}
-        ></div>
-
-        <div
-          className="absolute inset-0 opacity-[0.04] pointer-events-none"
-          style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)`,
-            backgroundSize: "60px 60px",
-          }}
-        ></div>
+        <AuthBackgroundGrid />
         <div className="relative z-10 text-center">
-          <div className="flex items-center justify-center gap-3 mb-16">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center shadow-xl shadow-orange-500/30">
-              <ChefHat size={24} className="text-white" strokeWidth={2} />
-            </div>
-            <span className="text-2xl font-black text-white tracking-tight">
-              Chef<span className="text-orange-400">AI</span>
-            </span>
+          <div className="flex items-center justify-center mb-16">
+            <Logo size="lg" />
           </div>
           <h2 className="text-4xl font-black text-white mb-4 leading-tight tracking-tight">
             Welcome{" "}
@@ -152,8 +139,8 @@ export default function SignInPage() {
           </p>
           <div className="max-w-xs mx-auto bg-white/4 border border-white/8 rounded-2xl p-5 text-left">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center">
-                <ChefHat size={14} className="text-white" />
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center shadow-md shadow-orange-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"></path><line x1="6" y1="17" x2="18" y2="17"></line></svg>
               </div>
               <span className="text-xs font-bold text-white/50 uppercase tracking-widest">
                 Saved Recipe
@@ -181,13 +168,8 @@ export default function SignInPage() {
       <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-16 relative">
         <div className="absolute top-0 right-0 w-[300px] h-[300px] rounded-full bg-orange-500/8 blur-[80px] pointer-events-none lg:hidden"></div>
         <div className="w-full max-w-md relative z-10">
-          <div className="flex items-center justify-center gap-2.5 mb-10 lg:hidden">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center shadow-lg shadow-orange-500/30">
-              <ChefHat size={20} className="text-white" strokeWidth={2.2} />
-            </div>
-            <span className="text-xl font-black text-white">
-              Chef<span className="text-orange-400">AI</span>
-            </span>
+          <div className="flex items-center justify-center mb-10 lg:hidden">
+            <Logo size="md" />
           </div>
           <div className="mb-8">
             <h1 className="text-3xl font-black text-white tracking-tight mb-2">
@@ -211,59 +193,18 @@ export default function SignInPage() {
               </div>
             )}
             {fields.map((field) => (
-              <div key={field.name}>
-                <label
-                  htmlFor={field.name}
-                  className="block text-xs font-semibold uppercase tracking-widest text-white/40 mb-2"
-                >
-                  {field.label}
-                </label>
-                <div
-                  className={`flex items-center gap-3 bg-white/5 border rounded-xl px-4 py-3.5 transition-all duration-200 ${
-                    errors[field.name]
-                      ? "border-red-500/60 bg-red-500/5"
-                      : focusedField === field.name
-                      ? "border-orange-500/60 bg-white/8 shadow-lg shadow-orange-500/10"
-                      : "border-white/10 hover:border-white/20"
-                  }`}
-                >
-                  <field.icon
-                    size={16}
-                    className={`shrink-0 transition-colors duration-200 ${
-                      errors[field.name]
-                        ? "text-red-400"
-                        : focusedField === field.name
-                        ? "text-orange-400"
-                        : "text-white/25"
-                    }`}
-                  />
-                  <input
-                    id={field.name}
-                    name={field.name}
-                    type={field.type}
-                    value={form[field.name]}
-                    onChange={handleChange}
-                    onFocus={() => setFocusedField(field.name)}
-                    onBlur={() => setFocusedField(null)}
-                    placeholder={field.placeholder}
-                    autoComplete={field.name === "password" ? "current-password" : "email"}
-                    className="flex-1 bg-transparent text-sm text-white placeholder:text-white/20 outline-none"
-                  />
-                  {field.isPassword && (
-                    <button
-                      type="button"
-                      id="toggle-signin-password"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="text-white/25 hover:text-white/60 transition-colors"
-                    >
-                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
-                  )}
-                </div>
-                {errors[field.name] && (
-                  <p className="text-red-400 text-xs mt-1.5">{errors[field.name]}</p>
-                )}
-              </div>
+              <InputField
+                key={field.name}
+                field={field}
+                value={form[field.name]}
+                error={errors[field.name]}
+                isFocused={focusedField === field.name}
+                showPassword={showPassword}
+                onChange={handleChange}
+                onFocus={() => setFocusedField(field.name)}
+                onBlur={() => setFocusedField(null)}
+                onTogglePassword={() => setShowPassword(!showPassword)}
+              />
             ))}
 
             <div className="flex justify-end -mt-2">
@@ -286,10 +227,7 @@ export default function SignInPage() {
               >
                 {loading ? (
                   <>
-                    <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                    </svg>
+                    <Spinner opacity="opacity-25" />
                     Signing In...
                   </>
                 ) : (
@@ -300,11 +238,7 @@ export default function SignInPage() {
                 )}
               </button>
           </form>
-          <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px bg-white/8"></div>
-            <span className="text-xs text-white/25 font-medium">or</span>
-            <div className="flex-1 h-px bg-white/8"></div>
-          </div>
+          <AuthDivider />
           <p className="text-center text-sm text-white/35">
             New to ChefAI?{" "}
             <Link

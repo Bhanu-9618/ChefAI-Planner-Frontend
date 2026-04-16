@@ -10,6 +10,7 @@ import {
   CheckCircle2,
   BookOpen,
 } from "lucide-react";
+import Logo from "../components/Logo";
 
 function FloatingOrbs() {
   return (
@@ -403,13 +404,8 @@ function Footer() {
   return (
     <footer className="border-t border-white/8 py-10 px-6">
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center">
-            <ChefHat size={16} className="text-white" strokeWidth={2.2} />
-          </div>
-          <span className="font-bold text-white">
-            Chef<span className="text-orange-400">AI</span>
-          </span>
+        <div className="flex items-center">
+          <Logo size="sm" />
         </div>
 
         <p className="text-xs text-white/25">© 2026 ChefAI. Made with ❤️ for food lovers.</p>
